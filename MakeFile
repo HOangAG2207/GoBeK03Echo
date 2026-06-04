@@ -36,3 +36,21 @@ ifndef folder
 	$(error ❌ Missing package path: use folder=./internal/...)
 endif
 	$(GO_TEST) $(GO_TEST_ARGS) $(folder)
+# ========================
+# Mock generation
+# ========================
+
+# Generate mock trong 1 package cụ thể
+# Usage: make mock-one folder=./internal/service
+mock-one:
+ifndef folder
+	$(error ❌ Missing folder: use folder=./internal/...)
+endif
+	@echo "→ Generating mocks in $(folder)..."
+	cd $(folder) && go generate ./...
+
+# Generate toàn bộ mock trong project
+# Usage: make mock-all
+mock-all:
+	@echo "→ Generating all mocks..."
+	go generate ./...

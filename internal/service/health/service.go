@@ -7,6 +7,7 @@ import (
 	"github.com/HOangAG2207/GoBeK03Echo/internal/repository/health"
 )
 
+//go:generate mockery --name Service --filename health_service_mock.go --output ./mocks
 type Service interface {
 	CheckHealth(ctx context.Context) (*model.HealthCheckResponse, error)
 }
