@@ -21,7 +21,7 @@ swagger-gen:
 # ========================
 
 # Run single test function
-test-unit-one:
+test-one:
 ifndef t
 	$(error ❌ Missing test name: use t=<NameOfTest>)
 endif
@@ -31,7 +31,7 @@ endif
 	$(GO_TEST) $(GO_TEST_ARGS) -run $(t) $(folder)
 
 # Run all tests in a package
-test-unit-all:
+test-all:
 ifndef folder
 	$(error ❌ Missing package path: use folder=./internal/...)
 endif
