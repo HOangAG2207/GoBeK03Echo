@@ -1,0 +1,12 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "REST API cho hệ thống GoBe K03 (health check, URL shortener, ...)\nSử dụng Echo framework + Redis + Clean Architecture",
+        "title": "GoBe K03 Project API",
+        "termsOfService": "https://example.com/terms",
+        "contact": {},
+        "version": "1.0.0"
+    },
+    "host": "localhost:8081",
+    "paths": {}
+}

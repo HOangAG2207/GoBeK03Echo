@@ -1,0 +1,19 @@
+.PHONY: run swagger
+
+# ========================
+# Variables
+# ========================
+GO := go
+GO_TEST := $(GO) test
+GO_TEST_ARGS := -v -cover
+
+# ========================
+# Run app
+# ========================
+run:swagger
+	$(GO) run ./cmd/api/main.go
+# ========================
+# Run app
+# ========================
+swagger:
+	swag init -g cmd/api/main.go

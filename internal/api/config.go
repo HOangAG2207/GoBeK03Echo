@@ -12,6 +12,7 @@ type Config struct {
 	Redis RedisConfig
 }
 type AppConfig struct {
+	Host        string `envconfig:"APP_HOST" default:"localhost"`
 	Port        string `envconfig:"APP_PORT" default:"8081"`
 	ServiceName string `envconfig:"APP_SERVICE_NAME" default:"golang-backend-k03-with-echo-v4"`
 	InstanceID  string `envconfig:"APP_INSTANCE_ID" default:""`

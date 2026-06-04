@@ -1,0 +1,11 @@
+host: localhost:8081
+info:
+  contact: {}
+  description: |-
+    REST API cho hệ thống GoBe K03 (health check, URL shortener, ...)
+    Sử dụng Echo framework + Redis + Clean Architecture
+  termsOfService: https://example.com/terms
+  title: GoBe K03 Project API
+  version: 1.0.0
+paths: {}
+swagger: "2.0"
