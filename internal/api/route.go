@@ -7,7 +7,7 @@ import (
 
 func (e *engine) initRoutes() {
 
-	// h := e.registerHandlers()
+	h := e.registerHandlers()
 
 	api := e.app.Group("/v1")
 
@@ -15,5 +15,5 @@ func (e *engine) initRoutes() {
 	api.GET("/docs/*", echoSwagger.WrapHandler)
 
 	// Health
-	// api.GET("/health-check", h.Health.CheckHealth)
+	api.GET("/health-check", h.Health.CheckHealth)
 }

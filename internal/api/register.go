@@ -1,23 +1,29 @@
 package api
 
+import (
+	healthHandler "github.com/HOangAG2207/GoBeK03Echo/internal/handler/health"
+	healthRepo "github.com/HOangAG2207/GoBeK03Echo/internal/repository/health"
+	healthService "github.com/HOangAG2207/GoBeK03Echo/internal/service/health"
+)
+
 type Handlers struct {
-	// Health handler.HealthHandler
+	Health healthHandler.Handler
 }
 
 func (e *engine) registerHandlers() *Handlers {
 
 	// ===== HEALTH =====
-	// healthRepo := repository.NewHealthRepository(e.redisClient)
+	healthRepo := healthRepo.NewRepository(e.redis)
 
-	// healthService := service.NewHealthService(
-	// 	healthRepo,
-	// 	e.config.ServiceName,
-	// 	e.config.InstanceID,
-	// )
+	healthService := healthService.NewService(
+		healthRepo,
+		e.config.App.ServiceName,
+		e.config.App.InstanceID,
+	)
 
-	// healthHandler := handler.NewHealthHandler(healthService)
+	healthHandler := healthHandler.NewHandler(healthService)
 
 	return &Handlers{
-		// Health: healthHandler,
+		Health: healthHandler,
 	}
 }

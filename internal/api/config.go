@@ -8,19 +8,13 @@ import (
 )
 
 type Config struct {
-	App   AppConfig
-	Redis RedisConfig
+	App AppConfig
 }
 type AppConfig struct {
 	Host        string `envconfig:"APP_HOST" default:"localhost"`
 	Port        string `envconfig:"APP_PORT" default:"8081"`
 	ServiceName string `envconfig:"APP_SERVICE_NAME" default:"golang-backend-k03-with-echo-v4"`
 	InstanceID  string `envconfig:"APP_INSTANCE_ID" default:""`
-}
-type RedisConfig struct {
-	Addr     string `envconfig:"REDIS_ADDR" default:"localhost:6379"`
-	Password string `envconfig:"REDIS_PASSWORD" default:""`
-	DB       int    `envconfig:"REDIS_DB" default:"0"`
 }
 
 func NewConfig() (*Config, error) {
