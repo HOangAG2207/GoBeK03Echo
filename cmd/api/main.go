@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"github.com/HOangAG2207/GoBeK03Echo/internal/api"
+	pkgredis "github.com/HOangAG2207/GoBeK03Echo/pkg/redis"
 )
 
 // @title           GoBe K03 Project API
@@ -15,6 +16,10 @@ import (
 
 // @host      localhost:8081
 // @BasePath
+
+// Tags phân loại API (sử dụng trong Swagger UI)
+// @tag.name        Health
+// @tag.name        Link
 func main() {
 
 	cfg, err := api.NewConfig()
@@ -23,13 +28,14 @@ func main() {
 		log.Fatalf("failed to load config: %v", err)
 	}
 
-	// redisClient, err := pkgredis.NewRedisClient("")
-	// if err != nil {
-	// 	panic(err)
-	// }
+	redisClient, err := pkgredis.NewClient("")
+	if err != nil {
+		panic(err)
+	}
 
 	app := api.NewEngine(&api.EngineOpts{
-		Cfg: cfg,
+		Cfg:   cfg,
+		Redis: redisClient,
 	})
 
 	// Start server (chạy HTTP server)
