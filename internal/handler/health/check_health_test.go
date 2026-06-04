@@ -10,6 +10,7 @@ import (
 
 	"github.com/HOangAG2207/GoBeK03Echo/internal/model"
 	"github.com/HOangAG2207/GoBeK03Echo/internal/service/health/mocks"
+	"github.com/HOangAG2207/GoBeK03Echo/internal/utils"
 	"github.com/labstack/echo/v4"
 	"github.com/stretchr/testify/assert"
 )
@@ -23,7 +24,9 @@ func TestHandler_CheckHealth(t *testing.T) {
 		setupMock func(ctx context.Context) *mocks.Service
 
 		expectedStatus int
-		expectedBody   map[string]interface{}
+
+		expectedSuccess *utils.SuccessResponse
+		expectedError   *utils.ErrorResponse
 	}{
 		{
 			name: "success - return 200",
@@ -37,9 +40,9 @@ func TestHandler_CheckHealth(t *testing.T) {
 				return s
 			},
 			expectedStatus: http.StatusOK,
-			expectedBody: map[string]any{
-				"status":  "success",
-				"message": "Health check passed",
+			expectedSuccess: &utils.SuccessResponse{
+				Status:  "success",
+				Message: "Health check passed",
 			},
 		},
 		{
@@ -50,9 +53,9 @@ func TestHandler_CheckHealth(t *testing.T) {
 				return s
 			},
 			expectedStatus: http.StatusInternalServerError,
-			expectedBody: map[string]any{
-				"status":  "fail",
-				"message": "Internal Server Error",
+			expectedError: &utils.ErrorResponse{
+				Status:  "fail",
+				Message: "Internal Server Error",
 			},
 		},
 	}
@@ -63,7 +66,6 @@ func TestHandler_CheckHealth(t *testing.T) {
 			t.Parallel()
 
 			e := echo.New()
-
 			req := httptest.NewRequest(http.MethodGet, "/v1/health-check", nil)
 			rec := httptest.NewRecorder()
 			c := e.NewContext(req, rec)
@@ -78,21 +80,34 @@ func TestHandler_CheckHealth(t *testing.T) {
 			assert.NoError(t, err)
 			assert.Equal(t, tc.expectedStatus, rec.Code)
 
-			var body map[string]interface{}
-			err = json.Unmarshal(rec.Body.Bytes(), &body)
-			assert.NoError(t, err)
+			if tc.expectedSuccess != nil {
+				var resp utils.SuccessResponse
+				err = json.Unmarshal(rec.Body.Bytes(), &resp)
+				assert.NoError(t, err)
 
-			assert.Equal(t, tc.expectedBody["status"], body["status"])
-			assert.Equal(t, tc.expectedBody["message"], body["message"])
+				assert.Equal(t, tc.expectedSuccess.Status, resp.Status)
+				assert.Equal(t, tc.expectedSuccess.Message, resp.Message)
 
-			// check thêm field data khi success
-			if rec.Code == http.StatusOK {
-				assert.NotNil(t, body["data"])
+				// parse data field sâu hơn
+				dataBytes, _ := json.Marshal(resp.Data)
+				var data model.HealthCheckResponse
+				err = json.Unmarshal(dataBytes, &data)
+				assert.NoError(t, err)
+
+				assert.Equal(t, "OK", data.Message)
+				assert.Equal(t, "test-service", data.ServiceName)
+				assert.Equal(t, "instance-1", data.InstanceID)
 			}
 
-			// check thêm field error khi fail
-			if rec.Code == http.StatusInternalServerError {
-				assert.NotNil(t, body["error"])
+			if tc.expectedError != nil {
+				var resp utils.ErrorResponse
+				err = json.Unmarshal(rec.Body.Bytes(), &resp)
+				assert.NoError(t, err)
+
+				assert.Equal(t, tc.expectedError.Status, resp.Status)
+				assert.Equal(t, tc.expectedError.Message, resp.Message)
+
+				assert.NotEmpty(t, resp.Error)
 			}
 		})
 	}
