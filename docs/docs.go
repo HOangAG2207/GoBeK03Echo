@@ -72,25 +72,25 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "302": {
-                        "description": "Redirect to original URL",
+                        "description": "Found - Redirect via Location header",
                         "schema": {
                             "type": "string"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/utils.ErrorResponse"
+                        },
+                        "headers": {
+                            "Location": {
+                                "type": "string",
+                                "description": "Original URL"
+                            }
                         }
                     },
                     "404": {
-                        "description": "Not Found",
+                        "description": "URL not found",
                         "schema": {
                             "$ref": "#/definitions/utils.ErrorResponse"
                         }
                     },
                     "500": {
-                        "description": "Internal Server Error",
+                        "description": "Internal server error",
                         "schema": {
                             "$ref": "#/definitions/utils.ErrorResponse"
                         }
@@ -113,7 +113,7 @@ const docTemplate = `{
                 "summary": "Shorten URL",
                 "parameters": [
                     {
-                        "description": "Shorten URL request",
+                        "description": "Shorten URL request (exp must be \u003e 0)",
                         "name": "request",
                         "in": "body",
                         "required": true,
@@ -177,6 +177,9 @@ const docTemplate = `{
         },
         "model.ShortenURLRequest": {
             "type": "object",
+            "required": [
+                "url"
+            ],
             "properties": {
                 "exp": {
                     "description": "thời gian hết hạn (giây)",
@@ -200,9 +203,7 @@ const docTemplate = `{
         "utils.ErrorResponse": {
             "type": "object",
             "properties": {
-                "error": {
-                    "type": "string"
-                },
+                "error": {},
                 "message": {
                     "type": "string"
                 },

@@ -20,6 +20,8 @@ definitions:
       url:
         example: http://localhost:8081/v1/docs/index.html
         type: string
+    required:
+    - url
     type: object
   model.ShortenURLResponse:
     properties:
@@ -28,8 +30,7 @@ definitions:
     type: object
   utils.ErrorResponse:
     properties:
-      error:
-        type: string
+      error: {}
       message:
         type: string
       status:
@@ -86,19 +87,19 @@ paths:
         type: string
       responses:
         "302":
-          description: Redirect to original URL
+          description: Found - Redirect via Location header
+          headers:
+            Location:
+              description: Original URL
+              type: string
           schema:
             type: string
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/utils.ErrorResponse'
         "404":
-          description: Not Found
+          description: URL not found
           schema:
             $ref: '#/definitions/utils.ErrorResponse'
         "500":
-          description: Internal Server Error
+          description: Internal server error
           schema:
             $ref: '#/definitions/utils.ErrorResponse'
       summary: Redirect short URL
@@ -110,7 +111,7 @@ paths:
       - application/json
       description: Generate a short code for a given URL
       parameters:
-      - description: Shorten URL request
+      - description: Shorten URL request (exp must be > 0)
         in: body
         name: request
         required: true

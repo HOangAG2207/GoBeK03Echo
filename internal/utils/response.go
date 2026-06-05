@@ -1,6 +1,8 @@
 package utils
 
 import (
+	"net/http"
+
 	"github.com/labstack/echo/v4"
 )
 
@@ -13,7 +15,7 @@ type SuccessResponse struct {
 type ErrorResponse struct {
 	Status  string `json:"status"`
 	Message string `json:"message"`
-	Error   string `json:"error,omitempty"`
+	Error   any    `json:"error,omitempty"`
 }
 
 func Success(c echo.Context, status int, message string, data any) error {
@@ -24,18 +26,13 @@ func Success(c echo.Context, status int, message string, data any) error {
 	})
 }
 
-func Fail(c echo.Context, status int, message string, err error) error {
-	var errMsg string
-	if err != nil {
-		errMsg = err.Error()
-	}
-
+func Fail(c echo.Context, status int, message string, err any) error {
 	return c.JSON(status, ErrorResponse{
 		Status:  "fail",
 		Message: message,
-		Error:   errMsg,
+		Error:   err,
 	})
 }
 func Fail500(c echo.Context, err error) error {
-	return Fail(c, 500, "Internal Server Error", err)
+	return Fail(c, http.StatusInternalServerError, "Internal Server Error", err)
 }

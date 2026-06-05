@@ -13,29 +13,22 @@ import (
 // @Summary      Redirect short URL
 // @Description  Redirect to original URL by short code
 // @Tags         Links
-// @Param        code   path      string  true "Short URL code"
-// @Success      302    {string}  string  "Redirect to original URL"
-// @Failure      400    {object}  utils.ErrorResponse
-// @Failure      404    {object}  utils.ErrorResponse
-// @Failure      500    {object}  utils.ErrorResponse
+// @Param        code   path      string  true  "Short URL code"
+// @Success      302    {string}  string  "Found - Redirect via Location header"
+// @Header       302    {string}  Location  "Original URL"
+// @Failure      404    {object}  utils.ErrorResponse "URL not found"
+// @Failure      500    {object}  utils.ErrorResponse "Internal server error"
 // @Router       /v1/links/redirect/{code} [get]
 func (h *handler) RedirectURL(ctx echo.Context) error {
 	code := ctx.Param("code")
 
-	// 1. Validate
-	if code == "" {
-		return utils.Fail(ctx, http.StatusBadRequest, "code is required", nil)
-	}
-
-	// 2. Get URL
 	url, err := h.service.GetURL(ctx.Request().Context(), code)
 	if err != nil {
 		if errors.Is(err, links.ErrCodeNotFound) {
 			return utils.Fail(ctx, http.StatusNotFound, "URL not found", nil)
 		}
-		return utils.Fail500(ctx, nil)
+		return utils.Fail500(ctx, err)
 	}
 
-	// 3. Redirect
 	return ctx.Redirect(http.StatusFound, url)
 }
