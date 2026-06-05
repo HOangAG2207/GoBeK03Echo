@@ -16,4 +16,10 @@ func (e *engine) initRoutes() {
 
 	// Health
 	api.GET("/health-check", h.Health.CheckHealth)
+
+	// Links
+	// - Shorten link
+	api.POST("/links/shorten", h.Links.ShortenURL)
+	// - Redirect link from code
+	api.GET("/links/redirect/:code", h.Links.RedirectURL)
 }

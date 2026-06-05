@@ -6,6 +6,8 @@ import (
 	"github.com/HOangAG2207/GoBeK03Echo/internal/repository/links"
 )
 
+//go:generate mockery --name Service --filename links_service_mock.go --output ./mocks
+
 type Service interface {
 	ShortenURL(ctx context.Context, url string, codeLength int, exptime int64) (string, error)
 	GetURL(ctx context.Context, code string) (string, error)

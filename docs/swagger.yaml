@@ -11,6 +11,21 @@ definitions:
         example: GoBe K03 API
         type: string
     type: object
+  model.ShortenURLRequest:
+    properties:
+      exp:
+        description: thời gian hết hạn (giây)
+        example: 604800
+        type: integer
+      url:
+        example: http://localhost:8081/v1/docs/index.html
+        type: string
+    type: object
+  model.ShortenURLResponse:
+    properties:
+      code:
+        type: string
+    type: object
   utils.ErrorResponse:
     properties:
       error:
@@ -60,7 +75,71 @@ paths:
       summary: Check service health
       tags:
       - Health
+  /v1/links/redirect/{code}:
+    get:
+      description: Redirect to original URL by short code
+      parameters:
+      - description: Short URL code
+        in: path
+        name: code
+        required: true
+        type: string
+      responses:
+        "302":
+          description: Redirect to original URL
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+      summary: Redirect short URL
+      tags:
+      - Links
+  /v1/links/shorten:
+    post:
+      consumes:
+      - application/json
+      description: Generate a short code for a given URL
+      parameters:
+      - description: Shorten URL request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.ShortenURLRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.ShortenURLResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+      summary: Shorten URL
+      tags:
+      - Links
 swagger: "2.0"
 tags:
 - name: Health
-- name: Link
+- name: Links

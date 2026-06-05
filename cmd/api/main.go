@@ -19,7 +19,7 @@ import (
 
 // Tags phân loại API (sử dụng trong Swagger UI)
 // @tag.name        Health
-// @tag.name        Link
+// @tag.name        Links
 func main() {
 
 	cfg, err := api.NewConfig()

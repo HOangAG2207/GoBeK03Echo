@@ -53,6 +53,108 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/v1/links/redirect/{code}": {
+            "get": {
+                "description": "Redirect to original URL by short code",
+                "tags": [
+                    "Links"
+                ],
+                "summary": "Redirect short URL",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Short URL code",
+                        "name": "code",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "302": {
+                        "description": "Redirect to original URL",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/utils.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/utils.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/links/shorten": {
+            "post": {
+                "description": "Generate a short code for a given URL",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Links"
+                ],
+                "summary": "Shorten URL",
+                "parameters": [
+                    {
+                        "description": "Shorten URL request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.ShortenURLRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/utils.SuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/model.ShortenURLResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/utils.ErrorResponse"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -70,6 +172,28 @@ const docTemplate = `{
                 "service_name": {
                     "type": "string",
                     "example": "GoBe K03 API"
+                }
+            }
+        },
+        "model.ShortenURLRequest": {
+            "type": "object",
+            "properties": {
+                "exp": {
+                    "description": "thời gian hết hạn (giây)",
+                    "type": "integer",
+                    "example": 604800
+                },
+                "url": {
+                    "type": "string",
+                    "example": "http://localhost:8081/v1/docs/index.html"
+                }
+            }
+        },
+        "model.ShortenURLResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
                 }
             }
         },
@@ -105,7 +229,7 @@ const docTemplate = `{
             "name": "Health"
         },
         {
-            "name": "Link"
+            "name": "Links"
         }
     ]
 }`
