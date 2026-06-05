@@ -54,3 +54,15 @@ endif
 mock-all:
 	@echo "→ Generating all mocks..."
 	go generate ./...
+# ========================
+# Coverage
+# ========================
+
+COVERAGE_TMP := coverage.tmp
+COVERAGE_OUT := coverage.out
+COVERAGE_HTML := coverage.html
+
+test-coverage:
+	go test ./... -coverprofile=$(COVERAGE_TMP) -covermode=atomic -coverpkg=./... -p 1
+	go run filter_coverage.go
+	go tool cover -html=$(COVERAGE_OUT) -o $(COVERAGE_HTML)

@@ -11,93 +11,104 @@ import (
 
 func TestRepository_StoreURL(t *testing.T) {
 	t.Parallel()
-
-	testCases := []struct {
-		name string
-
+	type fields struct {
+		mockRedis  func() *redis.Client
+		verifyFunc func(ctx context.Context, redisClient *redis.Client)
+	}
+	type args struct {
 		inputCode    string
 		inputUrl     string
 		inputExpTime int64
+	}
+	testCases := []struct {
+		name string
 
-		setupMock func() *redis.Client
+		args args
+
+		fields fields
 
 		expectedError error
-
-		verifyFunc func(ctx context.Context, redisClient *redis.Client)
 	}{
 		{
 			name: "store with no expiration",
+			args: args{
+				inputCode:    "test",
+				inputUrl:     "https://example.com",
+				inputExpTime: 0,
+			},
+			fields: fields{
+				mockRedis: func() *redis.Client {
+					return pkgredis.InitMockRedis(t)
+				},
+				verifyFunc: func(ctx context.Context, redisClient *redis.Client) {
+					url, err := redisClient.Get(ctx, "test").Result()
 
-			inputCode:    "test",
-			inputUrl:     "https://example.com",
-			inputExpTime: 0,
-
-			setupMock: func() *redis.Client {
-				return pkgredis.InitMockRedis(t)
+					assert.Nil(t, err)
+					assert.Equal(t, "https://example.com", url)
+				},
 			},
 
 			expectedError: nil,
-
-			verifyFunc: func(ctx context.Context, redisClient *redis.Client) {
-				url, err := redisClient.Get(ctx, "test").Result()
-
-				assert.Nil(t, err)
-				assert.Equal(t, "https://example.com", url)
-			},
 		},
 		{
 			name: "store with expiration",
+			args: args{
+				inputCode:    "test",
+				inputUrl:     "https://example.com",
+				inputExpTime: 60,
+			},
+			fields: fields{
+				mockRedis: func() *redis.Client {
+					return pkgredis.InitMockRedis(t)
+				},
+				verifyFunc: func(ctx context.Context, redisClient *redis.Client) {
+					ttl := redisClient.TTL(ctx, "test").Val()
 
-			inputCode:    "test",
-			inputUrl:     "https://example.com",
-			inputExpTime: 60,
-
-			setupMock: func() *redis.Client {
-				return pkgredis.InitMockRedis(t)
+					assert.Greater(t, ttl.Seconds(), float64(0))
+					assert.LessOrEqual(t, ttl.Seconds(), float64(60))
+				},
 			},
 
 			expectedError: nil,
-
-			verifyFunc: func(ctx context.Context, redisClient *redis.Client) {
-				ttl := redisClient.TTL(ctx, "test").Val()
-
-				assert.Greater(t, ttl.Seconds(), float64(0))
-				assert.LessOrEqual(t, ttl.Seconds(), float64(60))
-			},
 		},
 		{
 			name: "overwrite existing key",
+			args: args{
+				inputCode:    "test",
+				inputUrl:     "https://example.com",
+				inputExpTime: 60,
+			},
+			fields: fields{
+				mockRedis: func() *redis.Client {
+					rdb := pkgredis.InitMockRedis(t)
+					_ = rdb.Set(context.Background(), "test", "old-value", 0).Err()
+					return rdb
+				},
+				verifyFunc: func(ctx context.Context, redisClient *redis.Client) {
+					url, err := redisClient.Get(ctx, "test").Result()
 
-			inputCode:    "test",
-			inputUrl:     "https://example.com",
-			inputExpTime: 60,
-
-			setupMock: func() *redis.Client {
-				rdb := pkgredis.InitMockRedis(t)
-				_ = rdb.Set(context.Background(), "test", "old-value", 0).Err()
-				return rdb
+					assert.Nil(t, err)
+					assert.Equal(t, "https://example.com", url)
+				},
 			},
 
 			expectedError: nil,
-
-			verifyFunc: func(ctx context.Context, redisClient *redis.Client) {
-				url, err := redisClient.Get(ctx, "test").Result()
-
-				assert.Nil(t, err)
-				assert.Equal(t, "https://example.com", url)
-			},
 		},
 		{
 			name: "failed URL storage due to closed Redis client",
-
-			inputCode:    "test",
-			inputUrl:     "https://example.com",
-			inputExpTime: 60,
-
-			setupMock: func() *redis.Client {
-				redisClient := pkgredis.InitMockRedis(t)
-				redisClient.Close()
-				return redisClient
+			args: args{
+				inputCode:    "test",
+				inputUrl:     "https://example.com",
+				inputExpTime: 60,
+			},
+			fields: fields{
+				mockRedis: func() *redis.Client {
+					redisClient := pkgredis.InitMockRedis(t)
+					redisClient.Close()
+					return redisClient
+				},
+				verifyFunc: func(ctx context.Context, redisClient *redis.Client) {
+				},
 			},
 
 			expectedError: redis.ErrClosed,
@@ -112,21 +123,21 @@ func TestRepository_StoreURL(t *testing.T) {
 
 			ctx := t.Context()
 
-			redisMockClient := tc.setupMock()
+			redisMockClient := tc.fields.mockRedis()
 
 			urlStorage := NewRepository(redisMockClient)
 
 			err := urlStorage.StoreURL(
 				ctx,
-				tc.inputCode,
-				tc.inputUrl,
-				tc.inputExpTime,
+				tc.args.inputCode,
+				tc.args.inputUrl,
+				tc.args.inputExpTime,
 			)
 
 			assert.Equal(t, tc.expectedError, err)
 
-			if err == nil && tc.verifyFunc != nil {
-				tc.verifyFunc(ctx, redisMockClient)
+			if err == nil && tc.fields.verifyFunc != nil {
+				tc.fields.verifyFunc(ctx, redisMockClient)
 			}
 		})
 	}

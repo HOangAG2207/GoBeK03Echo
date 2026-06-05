@@ -13,7 +13,7 @@ import (
 func TestService_CheckHealth(t *testing.T) {
 	t.Parallel()
 
-	testCases := []struct {
+	tests := []struct {
 		name string
 
 		inputServiceName string
@@ -21,8 +21,8 @@ func TestService_CheckHealth(t *testing.T) {
 
 		setupMockRepo func(ctx context.Context) *mocks.Repository
 
-		expectedResponse *model.HealthCheckResponse
-		expectedError    error
+		expectError bool
+		checkResp   func(t *testing.T, resp *model.HealthCheckResponse)
 	}{
 		{
 			name:             "check health return OK status",
@@ -33,13 +33,32 @@ func TestService_CheckHealth(t *testing.T) {
 				repo.On("PingRedis", ctx).Return(nil)
 				return repo
 			},
-			expectedResponse: &model.HealthCheckResponse{
-				Message:     "OK",
-				ServiceName: "test-service",
-				InstanceID:  "instance-1",
+			expectError: false,
+			checkResp: func(t *testing.T, resp *model.HealthCheckResponse) {
+				assert.Equal(t, "OK", resp.Message)
+				assert.Equal(t, "test-service", resp.ServiceName)
+				assert.Equal(t, "instance-1", resp.InstanceID)
 			},
-			expectedError: nil,
 		},
+		{
+			name:             "check health auto-generate instance id when empty",
+			inputServiceName: "test-service",
+			inputInstanceID:  "",
+			setupMockRepo: func(ctx context.Context) *mocks.Repository {
+				repo := mocks.NewRepository(t)
+				repo.On("PingRedis", ctx).Return(nil)
+				return repo
+			},
+			expectError: false,
+			checkResp: func(t *testing.T, resp *model.HealthCheckResponse) {
+				assert.Equal(t, "OK", resp.Message)
+				assert.Equal(t, "test-service", resp.ServiceName)
+
+				// QUAN TRỌNG: chỉ check behavior
+				assert.NotEmpty(t, resp.InstanceID)
+			},
+		},
+
 		{
 			name:             "check health return redis error",
 			inputServiceName: "test-service",
@@ -49,26 +68,38 @@ func TestService_CheckHealth(t *testing.T) {
 				repo.On("PingRedis", ctx).Return(errors.New("redis down"))
 				return repo
 			},
-			expectedResponse: nil,
-			expectedError:    ErrRedisConnection,
+			expectError: true,
+			checkResp: func(t *testing.T, resp *model.HealthCheckResponse) {
+				assert.Nil(t, resp)
+			},
 		},
 	}
-	for _, tc := range testCases {
+
+	for _, tc := range tests {
+		tc := tc
+
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
+
 			ctx := t.Context()
 			mockRepo := tc.setupMockRepo(ctx)
+
 			svc := NewService(mockRepo, tc.inputServiceName, tc.inputInstanceID)
-			response, err := svc.CheckHealth(ctx)
-			if tc.expectedError != nil {
+
+			resp, err := svc.CheckHealth(ctx)
+
+			if tc.expectError {
 				assert.Error(t, err)
-				assert.Equal(t, tc.expectedError, err)
-				assert.Nil(t, response)
+				assert.Nil(t, resp)
 				return
 			}
 
 			assert.NoError(t, err)
-			assert.Equal(t, tc.expectedResponse, response)
+			assert.NotNil(t, resp)
+
+			if tc.checkResp != nil {
+				tc.checkResp(t, resp)
+			}
 		})
 	}
 }

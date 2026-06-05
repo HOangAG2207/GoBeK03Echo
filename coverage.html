@@ -1,0 +1,411 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>health: Go Coverage Report</title>
+		<style>
+			body {
+				background: black;
+				color: rgb(80, 80, 80);
+			}
+			body, pre, #legend span {
+				font-family: Menlo, monospace;
+				font-weight: bold;
+			}
+			#topbar {
+				background: black;
+				position: fixed;
+				top: 0; left: 0; right: 0;
+				height: 42px;
+				border-bottom: 1px solid rgb(80, 80, 80);
+			}
+			#content {
+				margin-top: 50px;
+			}
+			#nav, #legend {
+				float: left;
+				margin-left: 10px;
+			}
+			#legend {
+				margin-top: 12px;
+			}
+			#nav {
+				margin-top: 10px;
+			}
+			#legend span {
+				margin: 0 5px;
+			}
+			.cov0 { color: rgb(192, 0, 0) }
+.cov1 { color: rgb(128, 128, 128) }
+.cov2 { color: rgb(116, 140, 131) }
+.cov3 { color: rgb(104, 152, 134) }
+.cov4 { color: rgb(92, 164, 137) }
+.cov5 { color: rgb(80, 176, 140) }
+.cov6 { color: rgb(68, 188, 143) }
+.cov7 { color: rgb(56, 200, 146) }
+.cov8 { color: rgb(44, 212, 149) }
+.cov9 { color: rgb(32, 224, 152) }
+.cov10 { color: rgb(20, 236, 155) }
+
+		</style>
+	</head>
+	<body>
+		<div id="topbar">
+			<div id="nav">
+				<select id="files">
+				
+				<option value="file0">github.com/HOangAG2207/GoBeK03Echo/internal/handler/health/check_health.go (100.0%)</option>
+				
+				<option value="file1">github.com/HOangAG2207/GoBeK03Echo/internal/handler/health/handler.go (100.0%)</option>
+				
+				<option value="file2">github.com/HOangAG2207/GoBeK03Echo/internal/repository/health/ping_redis.go (100.0%)</option>
+				
+				<option value="file3">github.com/HOangAG2207/GoBeK03Echo/internal/repository/health/repository.go (100.0%)</option>
+				
+				<option value="file4">github.com/HOangAG2207/GoBeK03Echo/internal/repository/links/get_url.go (100.0%)</option>
+				
+				<option value="file5">github.com/HOangAG2207/GoBeK03Echo/internal/repository/links/repository.go (100.0%)</option>
+				
+				<option value="file6">github.com/HOangAG2207/GoBeK03Echo/internal/repository/links/store_url.go (100.0%)</option>
+				
+				<option value="file7">github.com/HOangAG2207/GoBeK03Echo/internal/service/health/check_health.go (100.0%)</option>
+				
+				<option value="file8">github.com/HOangAG2207/GoBeK03Echo/internal/service/health/service.go (100.0%)</option>
+				
+				<option value="file9">github.com/HOangAG2207/GoBeK03Echo/internal/service/links/get_url.go (100.0%)</option>
+				
+				<option value="file10">github.com/HOangAG2207/GoBeK03Echo/internal/service/links/service.go (100.0%)</option>
+				
+				<option value="file11">github.com/HOangAG2207/GoBeK03Echo/internal/service/links/shorten_link.go (92.9%)</option>
+				
+				</select>
+			</div>
+			<div id="legend">
+				<span>not tracked</span>
+			
+				<span class="cov0">no coverage</span>
+				<span class="cov1">low coverage</span>
+				<span class="cov2">*</span>
+				<span class="cov3">*</span>
+				<span class="cov4">*</span>
+				<span class="cov5">*</span>
+				<span class="cov6">*</span>
+				<span class="cov7">*</span>
+				<span class="cov8">*</span>
+				<span class="cov9">*</span>
+				<span class="cov10">high coverage</span>
+			
+			</div>
+		</div>
+		<div id="content">
+		
+		<pre class="file" id="file0" style="display: none">package health
+
+import (
+        "github.com/HOangAG2207/GoBeK03Echo/internal/utils"
+        "github.com/labstack/echo/v4"
+)
+
+// CheckHealth godoc
+// @Summary      Check service health
+// @Description  Kiểm tra trạng thái hoạt động của service và kết nối Redis
+// @Tags         Health
+// @Produce      json
+// @Success      200 {object} utils.SuccessResponse{data=model.HealthCheckResponse}
+// @Failure      500 {object} utils.ErrorResponse
+// @Router       /v1/health-check [get]
+func (h *handler) CheckHealth(c echo.Context) error <span class="cov10" title="4">{
+        response, err := h.service.CheckHealth(c.Request().Context())
+        if err != nil </span><span class="cov5" title="2">{
+                return utils.Fail500(c, err)
+        }</span>
+        <span class="cov5" title="2">return utils.Success(c, 200, "Health check passed", response)</span>
+}
+</pre>
+		
+		<pre class="file" id="file1" style="display: none">package health
+
+import (
+        "github.com/HOangAG2207/GoBeK03Echo/internal/service/health"
+        "github.com/labstack/echo/v4"
+)
+
+type Handler interface {
+        CheckHealth(c echo.Context) error
+}
+type handler struct {
+        service health.Service
+}
+
+func NewHandler(s health.Service) Handler <span class="cov10" title="4">{
+        return &amp;handler{
+                service: s,
+        }
+}</span>
+</pre>
+		
+		<pre class="file" id="file2" style="display: none">package health
+
+import "context"
+
+func (h *repository) PingRedis(ctx context.Context) error <span class="cov10" title="2">{
+        return h.redis.Ping(ctx).Err()
+}</span>
+</pre>
+		
+		<pre class="file" id="file3" style="display: none">package health
+
+import (
+        "context"
+
+        "github.com/redis/go-redis/v9"
+)
+
+//go:generate mockery --name Repository --filename health_repository_mock.go --output ./mocks
+type Repository interface {
+        PingRedis(ctx context.Context) error
+}
+type repository struct {
+        redis *redis.Client
+}
+
+func NewRepository(r *redis.Client) Repository <span class="cov10" title="2">{
+        return &amp;repository{
+                redis: r,
+        }
+}</span>
+</pre>
+		
+		<pre class="file" id="file4" style="display: none">package links
+
+import "context"
+
+func (r *repository) GetURL(ctx context.Context, code string) (string, error) <span class="cov10" title="2">{
+        return r.redis.Get(ctx, code).Result()
+}</span>
+</pre>
+		
+		<pre class="file" id="file5" style="display: none">package links
+
+import (
+        "context"
+
+        "github.com/redis/go-redis/v9"
+)
+
+//go:generate mockery --name Repository --filename links_repository_mock.go --output ./mocks
+type Repository interface {
+        StoreURL(ctx context.Context, code, url string, exptime int64) error
+        GetURL(ctx context.Context, code string) (string, error)
+}
+
+type repository struct {
+        redis *redis.Client
+}
+
+func NewRepository(r *redis.Client) Repository <span class="cov10" title="6">{
+        return &amp;repository{
+                redis: r,
+        }
+}</span>
+</pre>
+		
+		<pre class="file" id="file6" style="display: none">package links
+
+import (
+        "context"
+
+        "github.com/HOangAG2207/GoBeK03Echo/internal/utils"
+)
+
+func (r *repository) StoreURL(ctx context.Context, code, url string, exptime int64) error <span class="cov10" title="4">{
+        return r.redis.Set(ctx, code, url, utils.Int64ToDuration(exptime)).Err()
+}</span>
+</pre>
+		
+		<pre class="file" id="file7" style="display: none">package health
+
+import (
+        "context"
+        "errors"
+
+        "github.com/HOangAG2207/GoBeK03Echo/internal/model"
+        "github.com/HOangAG2207/GoBeK03Echo/internal/utils"
+)
+
+var (
+        ErrRedisConnection = errors.New("Redis: kết nối thất bại")
+)
+
+func (s *service) CheckHealth(ctx context.Context) (*model.HealthCheckResponse, error) <span class="cov10" title="3">{
+        if err := s.repo.PingRedis(ctx); err != nil </span><span class="cov1" title="1">{
+                return nil, ErrRedisConnection
+        }</span>
+        <span class="cov6" title="2">id := s.instanceID
+        if id == "" </span><span class="cov1" title="1">{
+                id = utils.UuidGenerator()
+        }</span>
+        <span class="cov6" title="2">return &amp;model.HealthCheckResponse{
+                Message:     "OK",
+                ServiceName: s.serviceName,
+                InstanceID:  id,
+        }, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file8" style="display: none">package health
+
+import (
+        "context"
+
+        "github.com/HOangAG2207/GoBeK03Echo/internal/model"
+        "github.com/HOangAG2207/GoBeK03Echo/internal/repository/health"
+)
+
+//go:generate mockery --name Service --filename health_service_mock.go --output ./mocks
+type Service interface {
+        CheckHealth(ctx context.Context) (*model.HealthCheckResponse, error)
+}
+
+type service struct {
+        repo        health.Repository
+        serviceName string
+        instanceID  string
+}
+
+func NewService(r health.Repository, serviceName, instanceID string) Service <span class="cov10" title="3">{
+        return &amp;service{
+                repo:        r,
+                serviceName: serviceName,
+                instanceID:  instanceID,
+        }
+}</span>
+</pre>
+		
+		<pre class="file" id="file9" style="display: none">package links
+
+import (
+        "context"
+        "errors"
+
+        "github.com/redis/go-redis/v9"
+)
+
+var ErrCodeNotFound = errors.New("Code not found")
+
+func (s *service) GetURL(ctx context.Context, code string) (string, error) <span class="cov10" title="4">{
+        url, err := s.repo.GetURL(ctx, code)
+        if errors.Is(err, redis.Nil) </span><span class="cov1" title="1">{
+                return "", ErrCodeNotFound
+        }</span>
+
+        <span class="cov8" title="3">if err != nil </span><span class="cov1" title="1">{
+                return "", err
+        }</span>
+
+        <span class="cov5" title="2">return url, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file10" style="display: none">package links
+
+import (
+        "context"
+
+        "github.com/HOangAG2207/GoBeK03Echo/internal/repository/links"
+)
+
+type Service interface {
+        ShortenURL(ctx context.Context, url string, codeLength int, exptime int64) (string, error)
+        GetURL(ctx context.Context, code string) (string, error)
+}
+type service struct {
+        repo links.Repository
+}
+
+func NewService(repo links.Repository) Service <span class="cov10" title="9">{
+        return &amp;service{
+                repo: repo,
+        }
+}</span>
+</pre>
+		
+		<pre class="file" id="file11" style="display: none">package links
+
+import (
+        "context"
+        "errors"
+
+        "github.com/HOangAG2207/GoBeK03Echo/internal/utils"
+        "github.com/redis/go-redis/v9"
+)
+
+const maxRetyAttempts = 10
+
+var ErrMaxRetriesExceeded = errors.New("maximum retry attempts exceeded for generating unique URL code")
+
+func (s *service) ShortenURL(ctx context.Context, url string, codeLength int, exptime int64) (string, error) <span class="cov6" title="5">{
+        for range maxRetyAttempts </span><span class="cov10" title="15">{
+
+                code, err := utils.GenerateCode(codeLength)
+                if err != nil </span><span class="cov0" title="0">{
+                        return "", err
+                }</span>
+
+                // check code exists
+                <span class="cov10" title="15">_, err = s.repo.GetURL(ctx, code)
+
+                // exists → retry
+                if err == nil </span><span class="cov8" title="11">{
+                        continue</span>
+                }
+
+                // real error
+                <span class="cov5" title="4">if err != redis.Nil </span><span class="cov1" title="1">{
+                        return "", err
+                }</span>
+
+                // not exists → store
+                <span class="cov4" title="3">err = s.repo.StoreURL(ctx, code, url, exptime)
+                if err != nil </span><span class="cov1" title="1">{
+                        return "", err
+                }</span>
+
+                <span class="cov3" title="2">return code, nil</span>
+        }
+
+        <span class="cov1" title="1">return "", ErrMaxRetriesExceeded</span>
+}
+</pre>
+		
+		</div>
+	</body>
+	<script>
+	(function() {
+		var files = document.getElementById('files');
+		var visible;
+		files.addEventListener('change', onChange, false);
+		function select(part) {
+			if (visible)
+				visible.style.display = 'none';
+			visible = document.getElementById(part);
+			if (!visible)
+				return;
+			files.value = part;
+			visible.style.display = 'block';
+			location.hash = part;
+		}
+		function onChange() {
+			select(files.value);
+			window.scrollTo(0, 0);
+		}
+		if (location.hash != "") {
+			select(location.hash.substr(1));
+		}
+		if (!visible) {
+			select("file0");
+		}
+	})();
+	</script>
+</html>

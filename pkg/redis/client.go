@@ -4,11 +4,7 @@ import (
 	"github.com/redis/go-redis/v9"
 )
 
-type Redis struct {
-	client *redis.Client
-}
-
-func NewClient(envPrefix string) (*Redis, error) {
+func NewClient(envPrefix string) (*redis.Client, error) {
 	cfg, err := newConfig(envPrefix)
 	if err != nil {
 		return nil, err
@@ -20,5 +16,5 @@ func NewClient(envPrefix string) (*Redis, error) {
 		DB:       cfg.redis.DB,
 	})
 
-	return &Redis{client: client}, nil
+	return client, nil
 }
