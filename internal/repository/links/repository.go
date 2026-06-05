@@ -3,7 +3,7 @@ package links
 import (
 	"context"
 
-	pkgredis "github.com/HOangAG2207/GoBeK03Echo/pkg/redis"
+	"github.com/redis/go-redis/v9"
 )
 
 type Repository interface {
@@ -12,10 +12,10 @@ type Repository interface {
 }
 
 type repository struct {
-	redis *pkgredis.Redis
+	redis *redis.Client
 }
 
-func NewRepository(r *pkgredis.Redis) Repository {
+func NewRepository(r *redis.Client) Repository {
 	return &repository{
 		redis: r,
 	}
