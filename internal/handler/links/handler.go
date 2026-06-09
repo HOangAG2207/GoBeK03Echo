@@ -6,8 +6,8 @@ import (
 )
 
 type Handler interface {
-	ShortenURL(ctx echo.Context) error
-	RedirectURL(ctx echo.Context) error
+	ShortenLink(ctx echo.Context) error
+	RedirectLink(ctx echo.Context) error
 }
 
 type handler struct {

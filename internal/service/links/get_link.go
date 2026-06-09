@@ -9,7 +9,7 @@ import (
 
 var ErrCodeNotFound = errors.New("Code not found")
 
-func (s *service) GetURL(ctx context.Context, code string) (string, error) {
+func (s *service) GetLink(ctx context.Context, code string) (string, error) {
 	url, err := s.repo.GetURL(ctx, code)
 	if errors.Is(err, redis.Nil) {
 		return "", ErrCodeNotFound

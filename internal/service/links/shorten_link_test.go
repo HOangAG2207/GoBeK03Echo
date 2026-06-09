@@ -11,7 +11,7 @@ import (
 	"github.com/HOangAG2207/GoBeK03Echo/internal/repository/links/mocks"
 )
 
-func TestService_ShortenURL(t *testing.T) {
+func TestService_ShortenLink(t *testing.T) {
 	t.Parallel()
 
 	type fields struct {
@@ -148,7 +148,7 @@ func TestService_ShortenURL(t *testing.T) {
 			repo := tc.fields.mockRepo()
 			s := NewService(repo)
 
-			_, err := s.ShortenURL(
+			_, err := s.ShortenLink(
 				context.Background(),
 				tc.args.url,
 				tc.args.codeLength,

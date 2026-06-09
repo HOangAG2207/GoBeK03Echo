@@ -13,7 +13,7 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
-func TestHandler_ShortenURL(t *testing.T) {
+func TestHandler_ShortenLink(t *testing.T) {
 	t.Parallel()
 
 	type fields struct {
@@ -47,7 +47,7 @@ func TestHandler_ShortenURL(t *testing.T) {
 					mockSvc := mocks.NewService(t)
 
 					mockSvc.
-						On("ShortenURL", mock.Anything, "https://google.com", 7, int64(3600)).
+						On("ShortenLink", mock.Anything, "https://google.com", 7, int64(3600)).
 						Return("abc123", nil).
 						Once()
 
@@ -120,7 +120,7 @@ func TestHandler_ShortenURL(t *testing.T) {
 					mockSvc := mocks.NewService(t)
 
 					mockSvc.
-						On("ShortenURL", mock.Anything, "https://google.com", 7, int64(3600)).
+						On("ShortenLink", mock.Anything, "https://google.com", 7, int64(3600)).
 						Return("", assert.AnError).
 						Once()
 
@@ -154,7 +154,7 @@ func TestHandler_ShortenURL(t *testing.T) {
 			handler := NewHandler(mockSvc)
 
 			// call handler
-			err := handler.ShortenURL(ctx)
+			err := handler.ShortenLink(ctx)
 
 			// assert
 			assert.NoError(t, err)

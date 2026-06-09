@@ -9,8 +9,8 @@ import (
 //go:generate mockery --name Service --filename links_service_mock.go --output ./mocks
 
 type Service interface {
-	ShortenURL(ctx context.Context, url string, codeLength int, exptime int64) (string, error)
-	GetURL(ctx context.Context, code string) (string, error)
+	ShortenLink(ctx context.Context, url string, codeLength int, exptime int64) (string, error)
+	GetLink(ctx context.Context, code string) (string, error)
 }
 type service struct {
 	repo links.Repository

@@ -1,4 +1,4 @@
-package health
+package integration_test
 
 import (
 	"encoding/json"

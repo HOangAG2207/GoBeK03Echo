@@ -20,7 +20,7 @@ import (
 // @Failure      400  {object}  utils.ErrorResponse
 // @Failure      500  {object}  utils.ErrorResponse
 // @Router       /v1/links/shorten [post]
-func (h *handler) ShortenURL(ctx echo.Context) error {
+func (h *handler) ShortenLink(ctx echo.Context) error {
 	req := new(model.ShortenURLRequest)
 
 	// 1. Bind
@@ -38,7 +38,7 @@ func (h *handler) ShortenURL(ctx echo.Context) error {
 	}
 
 	// 5. Call service
-	code, err := h.service.ShortenURL(
+	code, err := h.service.ShortenLink(
 		ctx.Request().Context(),
 		req.URL,
 		7,

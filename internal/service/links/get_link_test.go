@@ -11,7 +11,7 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
-func TestService_GetURL(t *testing.T) {
+func TestService_GetLink(t *testing.T) {
 	t.Parallel()
 
 	type args struct {
@@ -120,7 +120,7 @@ func TestService_GetURL(t *testing.T) {
 			repo := tc.fields.mockRepo()
 			s := NewService(repo)
 
-			url, err := s.GetURL(context.Background(), tc.args.inputCode)
+			url, err := s.GetLink(context.Background(), tc.args.inputCode)
 
 			assert.Equal(t, tc.expected.url, url)
 

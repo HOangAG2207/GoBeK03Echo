@@ -12,7 +12,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestHandler_RedirectUrl(t *testing.T) {
+func TestHandler_RedirectLink(t *testing.T) {
 	t.Parallel()
 
 	type fields struct {
@@ -43,7 +43,7 @@ func TestHandler_RedirectUrl(t *testing.T) {
 				},
 				setupMockService: func(ctx context.Context) *mocks.Service {
 					serviceMock := mocks.NewService(t)
-					serviceMock.On("GetURL", ctx, "abc123").
+					serviceMock.On("GetLink", ctx, "abc123").
 						Return("https://google.com", nil).
 						Once()
 					return serviceMock
@@ -67,7 +67,7 @@ func TestHandler_RedirectUrl(t *testing.T) {
 					serviceMock := mocks.NewService(t)
 
 					serviceMock.
-						On("GetURL", ctx, "").
+						On("GetLink", ctx, "").
 						Return("", links.ErrCodeNotFound).
 						Once()
 
@@ -94,7 +94,7 @@ func TestHandler_RedirectUrl(t *testing.T) {
 
 			testHandler := NewHandler(mockSvc)
 
-			testHandler.RedirectURL(ctx)
+			testHandler.RedirectLink(ctx)
 
 			assert.Equal(t, tc.expected.Status, rec.Code)
 			assert.Equal(t, tc.expected.Url, rec.Header().Get("Location"))

@@ -19,7 +19,7 @@ func (e *engine) initRoutes() {
 
 	// Links
 	// - Shorten link
-	api.POST("/links/shorten", h.Links.ShortenURL)
+	api.POST("/links/shorten", h.Links.ShortenLink)
 	// - Redirect link from code
-	api.GET("/links/redirect/:code", h.Links.RedirectURL)
+	api.GET("/links/redirect/:code", h.Links.RedirectLink)
 }

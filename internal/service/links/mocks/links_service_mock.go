@@ -13,12 +13,12 @@ type Service struct {
 	mock.Mock
 }
 
-// GetURL provides a mock function with given fields: ctx, code
-func (_m *Service) GetURL(ctx context.Context, code string) (string, error) {
+// GetLink provides a mock function with given fields: ctx, code
+func (_m *Service) GetLink(ctx context.Context, code string) (string, error) {
 	ret := _m.Called(ctx, code)
 
 	if len(ret) == 0 {
-		panic("no return value specified for GetURL")
+		panic("no return value specified for GetLink")
 	}
 
 	var r0 string
@@ -41,12 +41,12 @@ func (_m *Service) GetURL(ctx context.Context, code string) (string, error) {
 	return r0, r1
 }
 
-// ShortenURL provides a mock function with given fields: ctx, url, codeLength, exptime
-func (_m *Service) ShortenURL(ctx context.Context, url string, codeLength int, exptime int64) (string, error) {
+// ShortenLink provides a mock function with given fields: ctx, url, codeLength, exptime
+func (_m *Service) ShortenLink(ctx context.Context, url string, codeLength int, exptime int64) (string, error) {
 	ret := _m.Called(ctx, url, codeLength, exptime)
 
 	if len(ret) == 0 {
-		panic("no return value specified for ShortenURL")
+		panic("no return value specified for ShortenLink")
 	}
 
 	var r0 string

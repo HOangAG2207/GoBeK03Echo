@@ -12,7 +12,7 @@ const maxRetyAttempts = 10
 
 var ErrMaxRetriesExceeded = errors.New("maximum retry attempts exceeded for generating unique URL code")
 
-func (s *service) ShortenURL(ctx context.Context, url string, codeLength int, exptime int64) (string, error) {
+func (s *service) ShortenLink(ctx context.Context, url string, codeLength int, exptime int64) (string, error) {
 	for range maxRetyAttempts {
 
 		code, err := utils.GenerateCode(codeLength)
