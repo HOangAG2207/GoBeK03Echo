@@ -8,9 +8,6 @@ import (
 )
 
 type config struct {
-	redis redisConfig
-}
-type redisConfig struct {
 	Address string `envconfig:"REDIS_ADDR" default:"localhost:6379"`
 
 	Password string `envconfig:"REDIS_PASSWORD" default:""`

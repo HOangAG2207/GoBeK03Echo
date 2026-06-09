@@ -11,7 +11,7 @@ func SetLogLevel() error {
 	if err != nil {
 		return err
 	}
-	level, err := zerolog.ParseLevel(strings.ToLower(cfg.logger.LogLevel))
+	level, err := zerolog.ParseLevel(strings.ToLower(cfg.LogLevel))
 	if err != nil || level == zerolog.NoLevel {
 		level = zerolog.InfoLevel
 	}

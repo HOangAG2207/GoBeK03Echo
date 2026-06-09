@@ -11,9 +11,9 @@ func NewClient(envPrefix string) (*redis.Client, error) {
 	}
 
 	client := redis.NewClient(&redis.Options{
-		Addr:     cfg.redis.Address,
-		Password: cfg.redis.Password,
-		DB:       cfg.redis.DB,
+		Addr:     cfg.Address,
+		Password: cfg.Password,
+		DB:       cfg.DB,
 	})
 
 	return client, nil

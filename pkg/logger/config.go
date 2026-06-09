@@ -6,9 +6,6 @@ import (
 )
 
 type config struct {
-	logger loggerConfig
-}
-type loggerConfig struct {
 	LogLevel string `envconfig:"LOG_LEVEL" default:""`
 }
 
