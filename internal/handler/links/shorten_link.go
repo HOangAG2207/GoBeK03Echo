@@ -45,6 +45,7 @@ func (h *handler) ShortenLink(ctx echo.Context) error {
 		req.Exp,
 	)
 	if err != nil {
+
 		return utils.Fail500(ctx, nil)
 	}
 

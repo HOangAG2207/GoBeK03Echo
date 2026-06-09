@@ -45,7 +45,7 @@ func (e *engine) initMiddleware() {
 	e.app.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins: []string{"*"},
 	}))
-	e.app.Use(middleware.RequestLogger())
+	// e.app.Use(middleware.RequestLogger())
 	e.app.Use(middleware.Recover())
 }
 

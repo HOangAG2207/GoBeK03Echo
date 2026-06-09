@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"github.com/HOangAG2207/GoBeK03Echo/internal/api"
+	pkglogger "github.com/HOangAG2207/GoBeK03Echo/pkg/logger"
 	pkgredis "github.com/HOangAG2207/GoBeK03Echo/pkg/redis"
 )
 
@@ -30,6 +31,9 @@ func main() {
 
 	redisClient, err := pkgredis.NewClient("")
 	if err != nil {
+		panic(err)
+	}
+	if err := pkglogger.SetLogLevel(); err != nil {
 		panic(err)
 	}
 
