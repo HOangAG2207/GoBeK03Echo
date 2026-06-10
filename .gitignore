@@ -1,4 +1,4 @@
 .env
-!deployment/.env
+!deployment/**/.env
 coverage.*
 docs/
