@@ -16,7 +16,7 @@ import (
 // @Accept       json
 // @Produce      json
 // @Param		 request body model.ShortenURLRequest true "Shorten URL request (exp must be > 0)"
-// @Success      200  {object}  model.ShortenURLSuccessResponse
+// @Success      200  {object}  model.ShortenURLSwaggerResponse
 // @Failure      400  {object}  utils.ErrorResponse
 // @Failure      500  {object}  utils.ErrorResponse
 // @Router       /v1/links/shorten [post]

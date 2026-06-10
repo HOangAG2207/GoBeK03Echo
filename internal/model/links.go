@@ -8,3 +8,8 @@ type ShortenURLRequest struct {
 type ShortenURLResponse struct {
 	Code string `json:"code"`
 }
+type ShortenURLSwaggerResponse struct {
+	Status  string `json:"status"`
+	Message string `json:"message"`
+	Code    string `json:"code"`
+}

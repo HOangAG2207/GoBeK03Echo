@@ -30,19 +30,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/utils.SuccessResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/model.HealthCheckResponse"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/model.HealthCheckSwaggerResponse"
                         }
                     },
                     "500": {
@@ -126,19 +114,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/utils.SuccessResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/model.ShortenURLResponse"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/model.ShortenURLSwaggerResponse"
                         }
                     },
                     "400": {
@@ -158,20 +134,20 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "model.HealthCheckResponse": {
+        "model.HealthCheckSwaggerResponse": {
             "type": "object",
             "properties": {
                 "instance_id": {
-                    "type": "string",
-                    "example": "instance-12345"
+                    "type": "string"
                 },
                 "message": {
-                    "type": "string",
-                    "example": "OK"
+                    "type": "string"
                 },
                 "service_name": {
-                    "type": "string",
-                    "example": "GoBe K03 API"
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
                 }
             }
         },
@@ -188,22 +164,16 @@ const docTemplate = `{
                 },
                 "url": {
                     "type": "string",
-                    "example": "http://localhost:8081/v1/docs/index.html"
+                    "example": "https://google.com"
                 }
             }
         },
-        "model.ShortenURLResponse": {
+        "model.ShortenURLSwaggerResponse": {
             "type": "object",
             "properties": {
                 "code": {
                     "type": "string"
-                }
-            }
-        },
-        "utils.ErrorResponse": {
-            "type": "object",
-            "properties": {
-                "error": {},
+                },
                 "message": {
                     "type": "string"
                 },
@@ -212,10 +182,10 @@ const docTemplate = `{
                 }
             }
         },
-        "utils.SuccessResponse": {
+        "utils.ErrorResponse": {
             "type": "object",
             "properties": {
-                "data": {},
+                "error": {},
                 "message": {
                     "type": "string"
                 },

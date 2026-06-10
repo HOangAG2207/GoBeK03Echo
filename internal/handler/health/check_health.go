@@ -10,7 +10,7 @@ import (
 // @Description  Kiểm tra trạng thái hoạt động của service và kết nối Redis
 // @Tags         Health
 // @Produce      json
-// @Success      200 {object} utils.SuccessResponse{data=model.HealthCheckResponse}
+// @Success      200 {object} model.HealthCheckSwaggerResponse
 // @Failure      500 {object} utils.ErrorResponse
 // @Router       /v1/health-check [get]
 func (h *handler) CheckHealth(c echo.Context) error {

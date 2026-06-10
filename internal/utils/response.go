@@ -27,7 +27,7 @@ func Success(c echo.Context, status int, message string, data any) error {
 	// 	Data:    data,
 	// })
 	resp := map[string]any{
-		// "status":  "success",
+		"status":  "success",
 		"message": message,
 	}
 

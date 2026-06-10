@@ -4,6 +4,9 @@ RUN mkdir -p /opt/app
 
 WORKDIR /opt/app
 
+COPY go.mod go.sum ./
+RUN go mod download
+
 COPY . .
 
 RUN go build -o GoBeK03-Echo cmd/api/main.go

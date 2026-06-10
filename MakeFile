@@ -66,3 +66,24 @@ test-coverage:
 	go test ./... -coverprofile=$(COVERAGE_TMP) -covermode=atomic -coverpkg=./... -p 1
 	go run filter_coverage.go
 	go tool cover -html=$(COVERAGE_OUT) -o $(COVERAGE_HTML)
+# ========================
+# Docker hub image build
+# ========================
+docker-login:
+	docker login
+docker-build: swagger-gen
+ifndef name
+	$(error ❌ Missing image name: use name=<Name Of Image>)
+endif
+ifndef tag
+	$(error ❌ Missing tag: use tag=<Name of Tag image>)
+endif
+	docker build -t $(name):$(tag) .
+docker-push:
+ifndef name
+	$(error ❌ Missing image name: use name=<Name Of Image>)
+endif
+ifndef tag
+	$(error ❌ Missing tag: use tag=<Name of Tag image>)
+endif
+	docker push $(name):$(tag)
