@@ -67,10 +67,13 @@ test-coverage:
 	go run filter_coverage.go
 	go tool cover -html=$(COVERAGE_OUT) -o $(COVERAGE_HTML)
 # ========================
-# Docker hub image build
+# Docker login
 # ========================
 docker-login:
 	docker login
+# ========================
+# Docker hub image build
+# ========================
 docker-build: swagger-gen
 ifndef name
 	$(error ❌ Missing image name: use name=<Name Of Image>)
@@ -79,6 +82,9 @@ ifndef tag
 	$(error ❌ Missing tag: use tag=<Name of Tag image>)
 endif
 	docker build -t $(name):$(tag) .
+# ========================
+# Docker hub image push
+# ========================
 docker-push:
 ifndef name
 	$(error ❌ Missing image name: use name=<Name Of Image>)
