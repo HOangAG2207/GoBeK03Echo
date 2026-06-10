@@ -1,7 +1,7 @@
 package api
 
 import (
-	_ "github.com/HOangAG2207/GoBeK03Echo/docs"
+	"github.com/HOangAG2207/GoBeK03Echo/docs"
 	echoSwagger "github.com/swaggo/echo-swagger"
 )
 
@@ -11,6 +11,7 @@ func (e *engine) initRoutes() {
 
 	api := e.app.Group("/v1")
 
+	docs.SwaggerInfo.Host = e.config.Host
 	// Swagger
 	api.GET("/docs/*", echoSwagger.WrapHandler)
 

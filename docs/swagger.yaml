@@ -1,3 +1,4 @@
+basePath: /
 definitions:
   model.HealthCheckResponse:
     properties:
@@ -140,6 +141,8 @@ paths:
       summary: Shorten URL
       tags:
       - Links
+schemes:
+- http
 swagger: "2.0"
 tags:
 - name: Health

@@ -1,4 +1,7 @@
 {
+    "schemes": [
+        "http"
+    ],
     "swagger": "2.0",
     "info": {
         "description": "REST API cho hệ thống GoBe K03 (health check, URL shortener, ...)\nSử dụng Echo framework + Redis + Clean Architecture",
@@ -8,6 +11,7 @@
         "version": "1.0.0"
     },
     "host": "localhost:8081",
+    "basePath": "/",
     "paths": {
         "/v1/health-check": {
             "get": {

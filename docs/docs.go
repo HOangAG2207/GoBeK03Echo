@@ -239,8 +239,8 @@ const docTemplate = `{
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0.0",
 	Host:             "localhost:8081",
-	BasePath:         "",
-	Schemes:          []string{},
+	BasePath:         "/",
+	Schemes:          []string{"http"},
 	Title:            "GoBe K03 Project API",
 	Description:      "REST API cho hệ thống GoBe K03 (health check, URL shortener, ...)\nSử dụng Echo framework + Redis + Clean Architecture",
 	InfoInstanceName: "swagger",

@@ -20,8 +20,8 @@ func (e *engine) registerHandlers() *Handlers {
 	healthRepo := healthRepo.NewRepository(e.redis)
 	healthService := healthService.NewService(
 		healthRepo,
-		e.config.App.ServiceName,
-		e.config.App.InstanceID,
+		e.config.ServiceName,
+		e.config.InstanceID,
 	)
 	healthHandler := healthHandler.NewHandler(healthService)
 

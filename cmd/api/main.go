@@ -16,7 +16,8 @@ import (
 // @termsOfService  https://example.com/terms
 
 // @host      localhost:8081
-// @BasePath
+// @BasePath /
+// @schemes http
 
 // Tags phân loại API (sử dụng trong Swagger UI)
 // @tag.name        Health

@@ -43,14 +43,16 @@ func NewEngine(opts *EngineOpts) Engine {
 
 func (e *engine) initMiddleware() {
 	e.app.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		AllowOrigins: []string{"*"},
+		AllowOrigins: []string{"*"}, // hoặc cụ thể
+		AllowMethods: []string{http.MethodGet, http.MethodPost, http.MethodPut, http.MethodDelete},
 	}))
+
 	// e.app.Use(middleware.RequestLogger())
 	e.app.Use(middleware.Recover())
 }
 
 func (e *engine) Start() error {
-	port := e.config.App.Port
+	port := e.config.Port
 	if port[0] != ':' {
 		port = fmt.Sprintf(":%s", port)
 	}
