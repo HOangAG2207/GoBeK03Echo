@@ -13,7 +13,7 @@ func (e *engine) initRoutes() {
 
 	docs.SwaggerInfo.Host = e.config.Host
 	// Swagger
-	api.GET("/docs/*", echoSwagger.WrapHandler)
+	api.GET("/swagger/*any", echoSwagger.WrapHandler)
 
 	// Health
 	api.GET("/health-check", h.Health.CheckHealth)

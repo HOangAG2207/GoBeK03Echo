@@ -17,19 +17,19 @@ services:
       context: ../
       dockerfile: Dockerfile
     container_name: app-api
-    env_file:
-      - ../.env
     depends_on:
       redis:
         condition: service_healthy
-    environment:
-      - APP_PORT=8081
-      - REDIS_ADDR=redis:6379
-      - APP_HOST=localhost/api
-
+    env_file:
+      - .env
+  portal:
+    image: ebvn/bookmark-app-portal:dev
+    container_name: portal
+    restart: always
   nginx:
     image: nginx:alpine
     container_name: nginx
+    restart: always
     ports:
       - "80:80"
     volumes:

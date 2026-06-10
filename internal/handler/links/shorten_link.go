@@ -16,7 +16,7 @@ import (
 // @Accept       json
 // @Produce      json
 // @Param		 request body model.ShortenURLRequest true "Shorten URL request (exp must be > 0)"
-// @Success      200  {object}  utils.SuccessResponse{data=model.ShortenURLResponse}
+// @Success      200  {object}  model.ShortenURLSuccessResponse
 // @Failure      400  {object}  utils.ErrorResponse
 // @Failure      500  {object}  utils.ErrorResponse
 // @Router       /v1/links/shorten [post]
@@ -50,7 +50,12 @@ func (h *handler) ShortenLink(ctx echo.Context) error {
 	}
 
 	// 6. Response
-	return utils.Success(ctx, http.StatusOK, "Shorten URL generated successfully!", model.ShortenURLResponse{
-		Code: code,
-	})
+	return utils.Success(
+		ctx,
+		http.StatusOK,
+		"Shorten URL generated successfully!",
+		model.ShortenURLResponse{
+			Code: code,
+		},
+	)
 }

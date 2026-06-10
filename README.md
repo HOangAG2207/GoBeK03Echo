@@ -1,3 +1,374 @@
-## GoBeK03 Echo
-#Mockery lib go install github.com/vektra/mockery/v2@latest 
-#API docs swagger lib https://github.com/swaggo/swag https://github.com/swaggo/echo-swagger
+# Bookmark Management API
+
+A RESTful API service built with Go, following Clean Architecture principles. Shorten URLs and redirect to originals — backed by Redis with TTL support.
+
+## Tech Stack
+
+- **Go** 1.25.1
+- **HTTP Framework**: [Echo V4](https://github.com/labstack/echo/v4)
+- **Config**: [envconfig](https://github.com/kelseyhightower/envconfig) — all config via environment variables
+- **Structured Logging**: [zerolog](https://github.com/rs/zerolog) — console/JSON output, configurable level
+- **Redis Client**: [go-redis/v9](github.com/redis/go-redis/v9)
+- **Redis Mock (tests)**: [miniredis/v2](https://github.com/alicebob/miniredis)
+- **Testing**: [testify](https://github.com/stretchr/testify) + [mockery v2](https://github.com/vektra/mockery)
+- **API Docs**: [Swagger/OpenAPI](https://github.com/swaggo/swag) via `swag` and using for FW EchoV4 [Echo Swagger](github.com/swaggo/echo-swagger)
+- **Container**: Multi-stage Dockerfile + Docker Compose (app + Redis)
+
+## Project Structure
+
+```
+bookmark-management/
+├── cmd/
+│   └── api/
+│       └── main.go                      # Entrypoint — wires all dependencies
+├── docs/                                # Auto-generated Swagger docs (do not edit manually)
+│   ├── docs.go
+│   ├── swagger.json
+│   └── swagger.yaml
+├── internal/
+│   ├── api/
+│   │   ├── api.go                       # Gin engine, route registration
+│   │   ├── config.go                    # API-level config 
+|   |   ├── register.go
+|   |   └── route.go
+│   ├── handler/
+|   |   ├── health/
+|   |   |   ├── check_health.go           # HTTP handler — GET /v1/health-check
+│   │   |   ├── check_health_test.go
+|   |   |   └── handler.go
+|   |   ├── links/
+|   |   |   ├── shorten_link.go            # HTTP handler — POST /v1/links/shorten
+│   │   |   ├── shorten_link_test.go
+|   |   |   ├── redirect_link.go           # HTTP handler — GET /v1/links/redirect/:code
+│   │   |   ├── redirect_link_test.go
+|   |   └── └── handler.go
+│   ├── model/
+|   |   ├── health.go            
+|   |   └── links.go 
+│   ├── repository/
+|   |   ├── health/
+|   |   |   ├── mocks/      
+|   |   |   ├── ping_redis.go           
+│   │   |   ├── ping_redis_test.go
+|   |   |   └── repository.go
+|   |   ├── links/
+|   |   |   ├── mocks/
+|   |   |   ├── get_url.go            
+│   │   |   ├── get_url_test.go
+|   |   |   ├── store_url.go           
+│   │   |   ├── store_url_test.go
+|   |   └── └── repository.go 
+│   ├── service/
+|   |   ├── health/
+|   |   |   ├── mocks/      
+|   |   |   ├── check_health.go           
+│   │   |   ├── check_health_test.go
+|   |   |   └── service.go
+|   |   ├── links/
+|   |   |   ├── mocks/
+|   |   |   ├── get_link.go            
+│   │   |   ├── get_link_test.go
+|   |   |   ├── shorten_link.go           
+│   │   |   ├── shorten_link_test.go
+|   |   └── └── service.go 
+│   ├── test/
+│   |   ├── integration/
+│   │   |   ├── check_health_test.go       # End-to-end test — health check
+│   │   |   ├── redirect_link_test.go          # End-to-end test — redirect endpoint
+│   │   └── └── shorten_link_test.go           # End-to-end test — shorten endpoint
+│   └── utils/
+│   |   ├── validator/
+│   |   |   ├── message.go
+│   |   |   └── validator.go
+|   |   ├── code_random.go
+|   |   ├── convert.go
+|   |   ├── response.go
+│   └── └── uuid_generate.go
+├── pkg/
+│   ├── logger/
+│   │   ├── config.go                   
+│   │   └── level.go                    # zerolog init (console pretty for dev, JSON for prod)
+│   ├── redis/
+│   │   ├── client.go                    # Redis client factory
+│   │   ├── mock.go                    
+│   └── └── config.go                    # Redis config via envconfig
+├── ...
+├── .dockerignore
+├── .env.example                         # Env var template — copy to .env
+├── Dockerfile                           # Multi-stage build (alpine builder + alpine runtime, non-root)
+├── docker-compose.yml                   # app + redis services
+├── Makefile
+├── go.mod
+└── go.sum
+```
+
+## Configuration
+
+All configuration is read from environment variables at startup — no config files.
+
+**Note**: API-layer vars use prefix `API_` (envconfig `Process("api", cfg)` adds it). Service + Redis vars use no prefix. `HOST_PORT` is consumed by docker-compose only — not read by the Go app.
+
+| Variable                | Default              | Description                                                       |
+|-------------------------|----------------------|-------------------------------------------------------------------|
+| `HOST_PORT`             | `8080`               | Docker-only: host-side port published by compose (`HOST_PORT:CONTAINER_PORT`). Access via `http://localhost:$HOST_PORT`. |
+| `API_CONTAINER_PORT`    | `8080`               | Port the HTTP server listens on inside the container              |
+| `API_APP_ENV`           | `dev`                | `dev` = console pretty log, `prod` = JSON 1-line                  |
+| `API_LOG_LEVEL`         | `info`               | `debug` \| `info` \| `warn` \| `error`                            |
+| `API_SWAGGER_ENABLED`   | `false`              | Set to `true` to expose `/swagger/*` UI                           |
+| `SERVICE_NAME`          | `bookmark_service`   | Service identifier returned by `/health-check`                    |
+| `INSTANCE_ID`           | *(empty)*            | Instance identifier; auto-generated UUID if not provided          |
+| `REDIS_ADDR`            | `localhost:6379`     | Redis server address (compose overrides to `redis:6379`)          |
+| `REDIS_PASSWORD`        | *(empty)*            | Redis password (leave empty for local)                            |
+| `REDIS_DB`              | `0`                  | Redis database index (0–15)                                       |
+
+## Getting Started
+
+### Prerequisites
+
+- Go 1.26.2 (managed via `asdf` — `asdf local golang 1.26.2`)
+- Docker (for Redis container, or for full app + Redis via compose)
+- Development tools (install once):
+
+```bash
+make install-tools
+```
+
+This installs `swag`, `mockery v2`, and `goimports`.
+
+### Run locally
+
+1. Start Redis (Docker quick start):
+
+```bash
+docker run --name redis -d --rm -p 6379:6379 redis:alpine
+```
+
+2. Run the API:
+
+```bash
+make run
+```
+
+Generates Swagger docs, then starts the server on `localhost:8080`.
+
+With Swagger UI + debug logging:
+
+```bash
+API_SWAGGER_ENABLED=true API_LOG_LEVEL=debug make run
+# → http://localhost:8080/swagger/index.html
+```
+
+### Run with Docker
+
+Run the full stack (app + Redis) via Docker Compose — no need to start Redis separately.
+
+1. Create `.env` from template (one-time setup):
+
+```bash
+cp .env.example .env
+# Edit .env if needed — defaults are sensible for local dev
+```
+
+2. Build the image:
+
+```bash
+make docker-build
+```
+
+3. Start services (app + Redis):
+
+```bash
+make docker-run
+# → App: http://localhost:8080
+# → Swagger UI (if API_SWAGGER_ENABLED=true): http://localhost:8080/swagger/index.html
+```
+
+4. Tail logs:
+
+```bash
+make docker-logs
+```
+
+5. Verify (smoke test runbook): see [`../assignments/Lecture-03-smoke-test-docker.md`](../assignments/Lecture-03-smoke-test-docker.md).
+
+6. Stop and remove containers:
+
+```bash
+make docker-stop
+```
+
+**Docker setup details**:
+- Multi-stage build: `golang:1.26-alpine` builder → `alpine:3.20` runtime (image ~60MB)
+- Non-root user `app` inside container
+- **Port** is configured at the compose layer (not in `Dockerfile`) — image stays port-agnostic. Compose maps `${HOST_PORT}:${API_CONTAINER_PORT}` from `.env`; both default to `8080` when unset.
+- **Healthcheck** also lives in `docker-compose.yml` and hits `http://localhost:${API_CONTAINER_PORT}/health-check`. Container reports `healthy` once the app responds.
+- Compose service name `redis` is resolved automatically; app talks to Redis via `REDIS_ADDR=redis:6379` (overridden in `docker-compose.yml`)
+
+### Build
+
+```bash
+make build
+# → bin/api
+```
+
+## API Endpoints
+
+### `GET /health-check`
+
+Returns service health status.
+
+**Response `200 OK`:**
+
+```json
+{
+  "message": "OK",
+  "service_name": "bookmark_service",
+  "instance_id": "a1b2c3d4-e5f6-..."
+}
+```
+
+**Response `500 Internal Server Error`** *(Redis unreachable)*:
+
+```json
+{
+  "error": "<reason>"
+}
+```
+
+---
+
+### `POST /v1/links/shorten`
+
+Generates a 7-character alphanumeric short code for the given URL and stores it in Redis with the specified TTL.
+
+**Request body:**
+
+```json
+{
+  "url": "https://example.com",
+  "exp": 3600
+}
+```
+
+| Field | Type   | Required | Description               |
+|-------|--------|----------|---------------------------|
+| `url` | string | ✅        | Must be a valid URL        |
+| `exp` | int    | ✅        | TTL in seconds (min: 1)   |
+
+**Response `201 Created`:**
+
+```json
+{
+  "code": "aB3xYz9",
+  "message": "Shorten URL generated successfully!"
+}
+```
+
+**Response `400 Bad Request`** *(missing/invalid fields)*:
+
+```json
+{
+  "error": "invalid request"
+}
+```
+
+**Response `500 Internal Server Error`** *(Redis unreachable / code generation failure)*:
+
+```json
+{
+  "error": "internal server error"
+}
+```
+
+---
+
+### `GET /v1/links/redirect/:code`
+
+Resolves the shortened code and issues an HTTP 302 redirect to the original URL.
+
+**Path param:**
+
+| Param  | Type   | Description                              |
+|--------|--------|------------------------------------------|
+| `code` | string | Shortened code (typically 7-char alphanumeric) |
+
+**Response `302 Found`:**
+
+```
+HTTP/1.1 302 Found
+Location: https://example.com
+```
+
+**Response `404 Not Found`** *(code does not exist or has expired)*:
+
+```json
+{
+  "error": "code not found"
+}
+```
+
+**Response `500 Internal Server Error`** *(Redis unreachable)*:
+
+```json
+{
+  "error": "internal server error"
+}
+```
+
+Server-side log on 500 (zerolog structured):
+
+```
+ERR redirect url failed error="..." method=GET path=/v1/links/redirect/<code>
+```
+
+---
+
+### `GET /swagger/*` *(when `API_SWAGGER_ENABLED=true`)*
+
+Interactive Swagger UI documenting all endpoints.
+
+## Testing
+
+```bash
+# Run all tests (unit + integration)
+make test
+
+# Run with coverage report → coverage.html (threshold: 80%)
+make test-coverage
+```
+
+Tests follow Clean Architecture boundaries:
+- Unit tests mock at layer interfaces (mockery v2)
+- Integration tests spin up the real HTTP engine with miniredis (no Redis required)
+- Coverage threshold: **80%** (excludes `mocks`, `main.go`, `test`, `pkg/`)
+- Current coverage: **94.0%**
+
+## Makefile Targets
+
+```
+Run / Build:
+  make run              Run the server (regenerates Swagger docs first)
+  make build            Build binary → bin/api
+  make clean            Remove bin/, coverage.tmp, coverage.out, coverage.html
+
+Test:
+  make test             Run all tests
+  make test-race        Run all tests with race detector
+  make test-coverage    Run tests + coverage report (threshold: 80%)
+  make test-service     Service-layer tests (verbose + race + cover)
+  make test-handler     Handler-layer tests (verbose + race + cover)
+  make test-repository  Repository-layer tests (verbose + race + cover)
+
+Codegen / Docs:
+  make swag             Regenerate Swagger docs only
+  make generate         Run go generate (regenerate mocks, etc.)
+  make install-tools    Install swag, mockery v2, goimports
+  make fmt              Format code (go fmt + goimports)
+
+Docker:
+  make docker-build     Build app image via compose
+  make docker-run       Start app + Redis via compose (requires .env)
+  make docker-stop      Stop and remove compose services
+  make docker-logs      Tail app container logs
+  make docker-ps        List running compose services
+```
