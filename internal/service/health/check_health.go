@@ -5,7 +5,6 @@ import (
 	"errors"
 
 	"github.com/HOangAG2207/GoBeK03Echo/internal/model"
-	"github.com/HOangAG2207/GoBeK03Echo/internal/utils"
 )
 
 var (
@@ -16,13 +15,13 @@ func (s *service) CheckHealth(ctx context.Context) (*model.HealthCheckResponse, 
 	if err := s.repo.PingRedis(ctx); err != nil {
 		return nil, ErrRedisConnection
 	}
-	id := s.instanceID
-	if id == "" {
-		id = utils.UuidGenerator()
-	}
+	// id := s.instanceID
+	// if id == "" {
+	// 	id = utils.UuidGenerator()
+	// }
 	return &model.HealthCheckResponse{
 		Message:     "OK",
 		ServiceName: s.serviceName,
-		InstanceID:  id,
+		InstanceID:  s.instanceID,
 	}, nil
 }

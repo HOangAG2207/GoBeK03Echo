@@ -3,6 +3,7 @@ package api
 import (
 	"log"
 
+	"github.com/HOangAG2207/GoBeK03Echo/internal/utils"
 	"github.com/joho/godotenv"
 	"github.com/kelseyhightower/envconfig"
 )
@@ -24,6 +25,9 @@ func NewConfig() (*Config, error) {
 
 		// Nếu parse lỗi (type mismatch, thiếu field bắt buộc...)
 		return nil, err
+	}
+	if cfg.InstanceID == "" {
+		cfg.InstanceID = utils.UuidGenerator()
 	}
 	return &cfg, nil
 }
