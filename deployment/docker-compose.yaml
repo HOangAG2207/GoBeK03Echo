@@ -12,10 +12,10 @@ services:
     restart: unless-stopped
 
   app:
-    image: app-api:latest
-    build:
-      context: ../
-      dockerfile: Dockerfile
+    image: gin227/gobek03echo:dev
+    # build:
+    #   context: ../
+    #   dockerfile: Dockerfile
     container_name: app-api
     depends_on:
       redis:
