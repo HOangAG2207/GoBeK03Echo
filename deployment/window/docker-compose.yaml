@@ -24,7 +24,7 @@ services:
       redis:
         condition: service_healthy
     env_file:
-      - .env
+      - ../.env
     networks:
       - app-network
 
