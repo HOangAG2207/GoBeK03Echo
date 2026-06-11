@@ -85,7 +85,7 @@ endif
 # ========================
 # Docker hub image push
 # ========================
-docker-push:
+docker-release:
 ifndef name
 	$(error ❌ Missing image name: use name=<Name Of Image>)
 endif

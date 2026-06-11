@@ -12,3 +12,15 @@ coverage.tmp
 coverage.html
 # Local scratch / manual test main
 cmd/test/
+
+# folder deployment
+deployment/
+
+# other file
+Makefile
+README.md
+Dockerfile
+.dockerignore
+docker-compose.yml
+.env
+.env.example
