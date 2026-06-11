@@ -1,4 +1,17 @@
+# Editor/IDE
+.idea/
+.vscode/
+
+# env files
 .env
+# allow file .env
 !deployment/**/.env
-coverage.*
+
+# Coverage files
+coverage/
+coverage.out
+coverage.tmp
+coverage.html
+
+# Docs Swagger files
 docs/

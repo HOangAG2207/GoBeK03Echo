@@ -1,0 +1,14 @@
+# IDE / editor
+.idea/
+.vscode/
+
+# Git
+.git/
+.gitignore
+.github/
+# Test coverage
+coverage.out
+coverage.tmp
+coverage.html
+# Local scratch / manual test main
+cmd/test/
