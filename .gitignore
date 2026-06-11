@@ -5,7 +5,7 @@
 # env files
 .env
 # allow file .env
-!deployment/**/.env
+deployment/.env
 
 # Coverage files
 coverage/

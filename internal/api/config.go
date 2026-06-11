@@ -1,8 +1,6 @@
 package api
 
 import (
-	"log"
-
 	"github.com/HOangAG2207/GoBeK03Echo/internal/utils"
 	"github.com/joho/godotenv"
 	"github.com/kelseyhightower/envconfig"
@@ -17,9 +15,7 @@ type Config struct {
 }
 
 func NewConfig() (*Config, error) {
-	if err := godotenv.Load(); err != nil {
-		log.Println(".env not found")
-	}
+	_ = godotenv.Load()
 	var cfg Config
 	if err := envconfig.Process("", &cfg); err != nil {
 
