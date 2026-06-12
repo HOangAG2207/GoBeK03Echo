@@ -1,6 +1,8 @@
 package health
 
 import (
+	"net/http"
+
 	"github.com/HOangAG2207/GoBeK03Echo/internal/utils"
 	"github.com/labstack/echo/v4"
 )
@@ -18,5 +20,6 @@ func (h *handler) CheckHealth(c echo.Context) error {
 	if err != nil {
 		return utils.Fail500(c, err)
 	}
-	return utils.Success(c, 200, "Health check passed", response)
+
+	return utils.Success(c, http.StatusOK, "Health check passed", response)
 }

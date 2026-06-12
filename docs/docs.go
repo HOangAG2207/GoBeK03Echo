@@ -137,6 +137,9 @@ const docTemplate = `{
         "model.HealthCheckSwaggerResponse": {
             "type": "object",
             "properties": {
+                "info": {
+                    "type": "string"
+                },
                 "instance_id": {
                     "type": "string"
                 },
@@ -186,11 +189,12 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "error": {},
-                "message": {
+                "info": {
                     "type": "string"
                 },
                 "status": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "false"
                 }
             }
         }

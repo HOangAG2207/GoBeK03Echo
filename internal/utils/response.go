@@ -8,58 +8,59 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-type SuccessResponse struct {
-	Status  string `json:"status"`
-	Message string `json:"message"`
-	Data    any    `json:"data,omitempty"`
+type BaseResponse struct {
+	Status string `json:"status" example:"success"`
+	Info   string `json:"info"`
 }
 
 type ErrorResponse struct {
-	Status  string `json:"status"`
-	Message string `json:"message"`
-	Error   any    `json:"error,omitempty"`
+	Status string `json:"status" example:"false"`
+	Info   string `json:"info"`
+	Error  any    `json:"error,omitempty"`
 }
 
-func Success(c echo.Context, status int, message string, data any) error {
-	// return c.JSON(status, SuccessResponse{
-	// 	Status:  "success",
-	// 	Message: message,
-	// 	Data:    data,
-	// })
+// SUCCESS KHÔNG CÓ DATA WRAPPER
+func Success(c echo.Context, status int, info string, data any) error {
 	resp := map[string]any{
-		"status":  "success",
-		"message": message,
+		"status": "success",
+		"info":   info,
 	}
 
-	if data != nil {
-		if m, ok := toMap(data); ok {
-			maps.Copy(resp, m)
-		}
+	// merge struct vào root
+	if m, ok := structToMap(data); ok {
+		maps.Copy(resp, m)
 	}
 
 	return c.JSON(status, resp)
 }
 
-func Fail(c echo.Context, status int, message string, err any) error {
+func Fail(c echo.Context, status int, info string, err any) error {
 	return c.JSON(status, ErrorResponse{
-		// Status:  "fail",
-		Message: message,
-		Error:   err,
+		Status: "error",
+		Info:   info,
+		Error:  err,
 	})
 }
+
 func Fail500(c echo.Context, err error) error {
-	return Fail(c, http.StatusInternalServerError, "Internal Server Error", err)
+	var msg any = "Internal Server Error"
+
+	if err != nil {
+		msg = err.Error()
+	}
+
+	return Fail(c, http.StatusInternalServerError, "Internal Server Error", msg)
 }
-func toMap(data any) (map[string]any, bool) {
-	b, err := json.Marshal(data)
+func structToMap(data any) (map[string]any, bool) {
+	bytes, err := json.Marshal(data)
 	if err != nil {
 		return nil, false
 	}
 
-	var m map[string]any
-	if err := json.Unmarshal(b, &m); err != nil {
+	var result map[string]any
+	if err := json.Unmarshal(bytes, &result); err != nil {
 		return nil, false
 	}
 
-	return m, true
+	return result, true
 }

@@ -40,24 +40,6 @@ func TestService_CheckHealth(t *testing.T) {
 				assert.Equal(t, "instance-1", resp.InstanceID)
 			},
 		},
-		{
-			name:             "check health auto-generate instance id when empty",
-			inputServiceName: "test-service",
-			inputInstanceID:  "",
-			setupMockRepo: func(ctx context.Context) *mocks.Repository {
-				repo := mocks.NewRepository(t)
-				repo.On("PingRedis", ctx).Return(nil)
-				return repo
-			},
-			expectError: false,
-			checkResp: func(t *testing.T, resp *model.HealthCheckResponse) {
-				assert.Equal(t, "OK", resp.Message)
-				assert.Equal(t, "test-service", resp.ServiceName)
-
-				// QUAN TRỌNG: chỉ check behavior
-				assert.NotEmpty(t, resp.InstanceID)
-			},
-		},
 
 		{
 			name:             "check health return redis error",

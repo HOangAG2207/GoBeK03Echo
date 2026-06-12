@@ -1,16 +1,14 @@
 package integration_test
 
 import (
-	"encoding/json"
-	"errors"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 
 	handlerPkg "github.com/HOangAG2207/GoBeK03Echo/internal/handler/health"
 	"github.com/HOangAG2207/GoBeK03Echo/internal/model"
 	serviceMock "github.com/HOangAG2207/GoBeK03Echo/internal/service/health/mocks"
-	"github.com/HOangAG2207/GoBeK03Echo/internal/utils"
 
 	"github.com/labstack/echo/v4"
 	"github.com/stretchr/testify/assert"
@@ -23,40 +21,40 @@ func TestIntegration_HealthCheck(t *testing.T) {
 	testCases := []struct {
 		name string
 
-		setupMock func(s *serviceMock.Service)
+		setupHTTP func(e *echo.Echo) *httptest.ResponseRecorder
 
 		expectedStatus int
-
-		expectedSuccess *utils.SuccessResponse
-		expectedError   *utils.ErrorResponse
+		expectedBody   string
 	}{
 		{
-			name: "success - full flow OK",
-			setupMock: func(s *serviceMock.Service) {
-				s.On("CheckHealth", mock.Anything).
-					Return(&model.HealthCheckResponse{
-						Message:     "OK",
-						ServiceName: "test-service",
-						InstanceID:  "instance-1",
-					}, nil)
+			name: "Normal case - success",
+			setupHTTP: func(e *echo.Echo) *httptest.ResponseRecorder {
+				req := httptest.NewRequest(http.MethodGet, "/v1/health-check", nil)
+				rec := httptest.NewRecorder()
+
+				e.ServeHTTP(rec, req)
+				return rec
 			},
 			expectedStatus: http.StatusOK,
-			expectedSuccess: &utils.SuccessResponse{
-				Status:  "success",
-				Message: "Health check passed",
-			},
+			expectedBody: `{
+				"status":"success",
+				"info":"Health check passed",
+				"message":"OK",
+				"service_name":"test-service",
+				"instance_id":"instance-1"
+			}`,
 		},
 		{
-			name: "error - service fail",
-			setupMock: func(s *serviceMock.Service) {
-				s.On("CheckHealth", mock.Anything).
-					Return(nil, errors.New("something went wrong"))
+			name: "Not found route",
+			setupHTTP: func(e *echo.Echo) *httptest.ResponseRecorder {
+				req := httptest.NewRequest(http.MethodPost, "/unknown", nil)
+				rec := httptest.NewRecorder()
+
+				e.ServeHTTP(rec, req)
+				return rec
 			},
-			expectedStatus: http.StatusInternalServerError,
-			expectedError: &utils.ErrorResponse{
-				Status:  "fail",
-				Message: "Internal Server Error",
-			},
+			expectedStatus: http.StatusNotFound,
+			expectedBody:   `{"message":"Not Found"}`,
 		},
 	}
 
@@ -70,52 +68,34 @@ func TestIntegration_HealthCheck(t *testing.T) {
 
 			// ===== mock service =====
 			mockService := serviceMock.NewService(t)
-			tc.setupMock(mockService)
 
-			// ===== handler =====
-			handler := handlerPkg.NewHandler(mockService)
+			// setup behavior theo từng test
+			if tc.expectedStatus == http.StatusOK {
+				mockService.On("CheckHealth", mock.Anything).
+					Return(&model.HealthCheckResponse{
+						Message:     "OK",
+						ServiceName: "test-service",
+						InstanceID:  "instance-1",
+					}, nil)
+			}
 
-			e.GET("/v1/health-check", handler.CheckHealth)
+			// ===== register handler =====
+			h := handlerPkg.NewHandler(mockService)
+			e.GET("/v1/health-check", h.CheckHealth)
 
-			// ===== request =====
-			req := httptest.NewRequest(http.MethodGet, "/v1/health-check", nil)
-			rec := httptest.NewRecorder()
-
-			e.ServeHTTP(rec, req)
+			// ===== call API =====
+			rec := tc.setupHTTP(e)
 
 			// ===== assert status =====
 			assert.Equal(t, tc.expectedStatus, rec.Code)
 
-			// ===== success case =====
-			if tc.expectedSuccess != nil {
-				var resp utils.SuccessResponse
-				err := json.Unmarshal(rec.Body.Bytes(), &resp)
-				assert.NoError(t, err)
-
-				assert.Equal(t, tc.expectedSuccess.Status, resp.Status)
-				assert.Equal(t, tc.expectedSuccess.Message, resp.Message)
-
-				// ✅ strong typing cho data
-				dataBytes, _ := json.Marshal(resp.Data)
-
-				var data model.HealthCheckResponse
-				err = json.Unmarshal(dataBytes, &data)
-				assert.NoError(t, err)
-
-				assert.Equal(t, "OK", data.Message)
-				assert.Equal(t, "test-service", data.ServiceName)
-				assert.Equal(t, "instance-1", data.InstanceID)
+			// ===== assert body =====
+			if tc.expectedStatus == http.StatusOK {
+				assert.JSONEq(t, tc.expectedBody, rec.Body.String())
 			}
 
-			// ===== error case =====
-			if tc.expectedError != nil {
-				var resp utils.ErrorResponse
-				err := json.Unmarshal(rec.Body.Bytes(), &resp)
-				assert.NoError(t, err)
-
-				assert.Equal(t, tc.expectedError.Status, resp.Status)
-				assert.Equal(t, tc.expectedError.Message, resp.Message)
-				assert.NotEmpty(t, resp.Error)
+			if tc.expectedStatus == http.StatusNotFound {
+				assert.Equal(t, tc.expectedBody, strings.TrimSpace(rec.Body.String()))
 			}
 		})
 	}

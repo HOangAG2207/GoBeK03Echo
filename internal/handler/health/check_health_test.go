@@ -10,7 +10,6 @@ import (
 
 	"github.com/HOangAG2207/GoBeK03Echo/internal/model"
 	"github.com/HOangAG2207/GoBeK03Echo/internal/service/health/mocks"
-	"github.com/HOangAG2207/GoBeK03Echo/internal/utils"
 	"github.com/labstack/echo/v4"
 	"github.com/stretchr/testify/assert"
 )
@@ -25,8 +24,9 @@ func TestHandler_CheckHealth(t *testing.T) {
 
 		expectedStatus int
 
-		expectedSuccess *utils.SuccessResponse
-		expectedError   *utils.ErrorResponse
+		// chỉ giữ expectation cần thiết
+		expectSuccess bool
+		expectError   bool
 	}{
 		{
 			name: "success - return 200",
@@ -40,10 +40,7 @@ func TestHandler_CheckHealth(t *testing.T) {
 				return s
 			},
 			expectedStatus: http.StatusOK,
-			expectedSuccess: &utils.SuccessResponse{
-				Status:  "success",
-				Message: "Health check passed",
-			},
+			expectSuccess:  true,
 		},
 		{
 			name: "error - return 500",
@@ -53,10 +50,7 @@ func TestHandler_CheckHealth(t *testing.T) {
 				return s
 			},
 			expectedStatus: http.StatusInternalServerError,
-			expectedError: &utils.ErrorResponse{
-				Status:  "fail",
-				Message: "Internal Server Error",
-			},
+			expectError:    true,
 		},
 	}
 
@@ -80,34 +74,28 @@ func TestHandler_CheckHealth(t *testing.T) {
 			assert.NoError(t, err)
 			assert.Equal(t, tc.expectedStatus, rec.Code)
 
-			if tc.expectedSuccess != nil {
-				var resp utils.SuccessResponse
-				err = json.Unmarshal(rec.Body.Bytes(), &resp)
-				assert.NoError(t, err)
+			var resp map[string]any
+			err = json.Unmarshal(rec.Body.Bytes(), &resp)
+			assert.NoError(t, err)
 
-				assert.Equal(t, tc.expectedSuccess.Status, resp.Status)
-				assert.Equal(t, tc.expectedSuccess.Message, resp.Message)
+			// ===== SUCCESS CASE =====
+			if tc.expectSuccess {
+				assert.Equal(t, "success", resp["status"])
+				assert.Equal(t, "Health check passed", resp["info"])
 
-				// parse data field sâu hơn
-				dataBytes, _ := json.Marshal(resp.Data)
-				var data model.HealthCheckResponse
-				err = json.Unmarshal(dataBytes, &data)
-				assert.NoError(t, err)
-
-				assert.Equal(t, "OK", data.Message)
-				assert.Equal(t, "test-service", data.ServiceName)
-				assert.Equal(t, "instance-1", data.InstanceID)
+				// data bị flatten
+				assert.Equal(t, "OK", resp["message"])
+				assert.Equal(t, "test-service", resp["service_name"])
+				assert.Equal(t, "instance-1", resp["instance_id"])
 			}
 
-			if tc.expectedError != nil {
-				var resp utils.ErrorResponse
-				err = json.Unmarshal(rec.Body.Bytes(), &resp)
-				assert.NoError(t, err)
+			// ===== ERROR CASE =====
+			if tc.expectError {
+				assert.Equal(t, "error", resp["status"])
+				assert.Equal(t, "Internal Server Error", resp["info"])
 
-				assert.Equal(t, tc.expectedError.Status, resp.Status)
-				assert.Equal(t, tc.expectedError.Message, resp.Message)
-
-				assert.NotEmpty(t, resp.Error)
+				assert.Contains(t, resp, "error")
+				assert.NotEmpty(t, resp["error"])
 			}
 		})
 	}

@@ -2,6 +2,8 @@ basePath: /
 definitions:
   model.HealthCheckSwaggerResponse:
     properties:
+      info:
+        type: string
       instance_id:
         type: string
       message:
@@ -35,9 +37,10 @@ definitions:
   utils.ErrorResponse:
     properties:
       error: {}
-      message:
+      info:
         type: string
       status:
+        example: "false"
         type: string
     type: object
 host: localhost:8081
