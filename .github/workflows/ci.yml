@@ -36,7 +36,7 @@ jobs:
             type=ref,event=tag
             type=raw,value=dev,enable=${{ github.ref_name == 'main' }}
 
-      - name: Build and Push docker image
+      - name: Build & Push docker image
         uses: docker/build-push-action@v6
         with:
           context: .
