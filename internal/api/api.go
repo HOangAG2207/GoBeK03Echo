@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 
+	pkgutils "github.com/HOangAG2207/GoBeK03Echo/pkg/utils"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/redis/go-redis/v9"
@@ -16,21 +17,24 @@ type Engine interface {
 }
 
 type engine struct {
-	app    *echo.Echo
-	config *Config
-	redis  *redis.Client
+	app           *echo.Echo
+	config        *Config
+	redis         *redis.Client
+	randomCodeGen pkgutils.CodeGenerator
 }
 
 type EngineOpts struct {
-	Cfg   *Config
-	Redis *redis.Client
+	Cfg           *Config
+	Redis         *redis.Client
+	RandomCodeGen pkgutils.CodeGenerator
 }
 
 func NewEngine(opts *EngineOpts) Engine {
 	e := &engine{
-		app:    echo.New(),
-		config: opts.Cfg,
-		redis:  opts.Redis,
+		app:           echo.New(),
+		config:        opts.Cfg,
+		redis:         opts.Redis,
+		randomCodeGen: opts.RandomCodeGen,
 	}
 
 	e.initMiddleware()
