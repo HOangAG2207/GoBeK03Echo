@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 
-	"github.com/HOangAG2207/GoBeK03Echo/internal/utils"
 	"github.com/redis/go-redis/v9"
 )
 
@@ -15,7 +14,8 @@ var ErrMaxRetriesExceeded = errors.New("maximum retry attempts exceeded for gene
 func (s *service) ShortenLink(ctx context.Context, url string, codeLength int, exptime int64) (string, error) {
 	for range maxRetyAttempts {
 
-		code, err := utils.GenerateCode(codeLength)
+		code, err := s.randomCode.GenerateCode(codeLength)
+		// code, err := utils.GenerateCode(codeLength)
 		if err != nil {
 			return "", err
 		}

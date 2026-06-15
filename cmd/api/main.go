@@ -6,6 +6,7 @@ import (
 	"github.com/HOangAG2207/GoBeK03Echo/internal/api"
 	pkglogger "github.com/HOangAG2207/GoBeK03Echo/pkg/logger"
 	pkgredis "github.com/HOangAG2207/GoBeK03Echo/pkg/redis"
+	pkgutils "github.com/HOangAG2207/GoBeK03Echo/pkg/utils"
 )
 
 // @title           GoBe K03 Project API
@@ -39,8 +40,9 @@ func main() {
 	}
 
 	app := api.NewEngine(&api.EngineOpts{
-		Cfg:   cfg,
-		Redis: redisClient,
+		Cfg:           cfg,
+		Redis:         redisClient,
+		RandomCodeGen: pkgutils.NewCodeGenerator(),
 	})
 
 	// Start server (chạy HTTP server)

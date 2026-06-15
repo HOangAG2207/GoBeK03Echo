@@ -5,7 +5,9 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/HOangAG2207/GoBeK03Echo/internal/repository/links/mocks"
+	repoMocks "github.com/HOangAG2207/GoBeK03Echo/internal/repository/links/mocks"
+	utilsMocks "github.com/HOangAG2207/GoBeK03Echo/pkg/utils/mocks"
+
 	"github.com/redis/go-redis/v9"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -22,8 +24,10 @@ func TestService_GetLink(t *testing.T) {
 		url string
 		err error
 	}
+
 	type fields struct {
-		mockRepo func() *mocks.Repository
+		mockRepo func() *repoMocks.Repository
+		mockCode func() *utilsMocks.CodeGenerator
 	}
 
 	testCases := []struct {
@@ -38,89 +42,109 @@ func TestService_GetLink(t *testing.T) {
 				inputCode: "abc123",
 			},
 			fields: fields{
-				mockRepo: func() *mocks.Repository {
-					m := mocks.NewRepository(t)
+				mockRepo: func() *repoMocks.Repository {
+					m := repoMocks.NewRepository(t)
+
 					m.On("GetURL", mock.Anything, "abc123").
 						Return("https://example.com", nil).
 						Once()
+
 					return m
+				},
+				mockCode: func() *utilsMocks.CodeGenerator {
+					return utilsMocks.NewCodeGenerator(t)
 				},
 			},
 			expected: expected{
 				url: "https://example.com",
-				err: nil,
 			},
 		},
-
 		{
 			name: "not found - redis.Nil should return ErrCodeNotFound",
 			args: args{
 				inputCode: "notfound",
 			},
 			fields: fields{
-				mockRepo: func() *mocks.Repository {
-					m := mocks.NewRepository(t)
+				mockRepo: func() *repoMocks.Repository {
+					m := repoMocks.NewRepository(t)
+
 					m.On("GetURL", mock.Anything, "notfound").
 						Return("", redis.Nil).
 						Once()
+
 					return m
+				},
+				mockCode: func() *utilsMocks.CodeGenerator {
+					return utilsMocks.NewCodeGenerator(t)
 				},
 			},
 			expected: expected{
-				url: "",
 				err: ErrCodeNotFound,
 			},
 		},
-
 		{
 			name: "empty string is valid value",
 			args: args{
 				inputCode: "empty",
 			},
 			fields: fields{
-				mockRepo: func() *mocks.Repository {
-					m := mocks.NewRepository(t)
+				mockRepo: func() *repoMocks.Repository {
+					m := repoMocks.NewRepository(t)
+
 					m.On("GetURL", mock.Anything, "empty").
 						Return("", nil).
 						Once()
+
 					return m
+				},
+				mockCode: func() *utilsMocks.CodeGenerator {
+					return utilsMocks.NewCodeGenerator(t)
 				},
 			},
 			expected: expected{
 				url: "",
-				err: nil,
 			},
 		},
-
 		{
 			name: "repo error - should return error directly",
 			args: args{
 				inputCode: "errorcase",
 			},
 			fields: fields{
-				mockRepo: func() *mocks.Repository {
-					m := mocks.NewRepository(t)
+				mockRepo: func() *repoMocks.Repository {
+					m := repoMocks.NewRepository(t)
+
 					m.On("GetURL", mock.Anything, "errorcase").
 						Return("", errors.New("redis down")).
 						Once()
+
 					return m
+				},
+				mockCode: func() *utilsMocks.CodeGenerator {
+					return utilsMocks.NewCodeGenerator(t)
 				},
 			},
 			expected: expected{
-				url: "",
 				err: errors.New("redis down"),
 			},
 		},
 	}
+
 	for _, tc := range testCases {
+		tc := tc
 
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
 
 			repo := tc.fields.mockRepo()
-			s := NewService(repo)
+			codeGen := tc.fields.mockCode()
 
-			url, err := s.GetLink(context.Background(), tc.args.inputCode)
+			s := NewService(repo, codeGen)
+
+			url, err := s.GetLink(
+				context.Background(),
+				tc.args.inputCode,
+			)
 
 			assert.Equal(t, tc.expected.url, url)
 
@@ -132,6 +156,7 @@ func TestService_GetLink(t *testing.T) {
 			}
 
 			repo.AssertExpectations(t)
+			codeGen.AssertExpectations(t)
 		})
 	}
 }

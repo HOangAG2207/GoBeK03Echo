@@ -2,6 +2,7 @@ package links
 
 import (
 	"context"
+	"errors"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -76,6 +77,37 @@ func TestHandler_RedirectLink(t *testing.T) {
 			},
 			expected: expected{
 				Status: http.StatusNotFound,
+				Url:    "",
+			},
+		},
+		{
+			name: "internal error should return 500",
+			fields: fields{
+				setupRequest: func(ctx echo.Context) {
+					req := httptest.NewRequest(
+						http.MethodGet,
+						"/v1/links/redirect/abc123",
+						nil,
+					)
+
+					ctx.SetRequest(req)
+					ctx.SetParamNames("code")
+					ctx.SetParamValues("abc123")
+				},
+
+				setupMockService: func(ctx context.Context) *mocks.Service {
+					serviceMock := mocks.NewService(t)
+
+					serviceMock.
+						On("GetLink", ctx, "abc123").
+						Return("", errors.New("redis down")).
+						Once()
+
+					return serviceMock
+				},
+			},
+			expected: expected{
+				Status: http.StatusInternalServerError,
 				Url:    "",
 			},
 		},

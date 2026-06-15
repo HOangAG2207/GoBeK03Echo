@@ -7,6 +7,7 @@ import (
 	"github.com/HOangAG2207/GoBeK03Echo/internal/utils"
 	"github.com/HOangAG2207/GoBeK03Echo/internal/utils/validator"
 	"github.com/labstack/echo/v4"
+	"github.com/rs/zerolog/log"
 )
 
 // ShortenURL godoc
@@ -45,7 +46,7 @@ func (h *handler) ShortenLink(ctx echo.Context) error {
 		req.Exp,
 	)
 	if err != nil {
-
+		log.Error().Err(err).Str("From", "links.handler.ShortenLink").Msg("Fail to short url")
 		return utils.Fail500(ctx, nil)
 	}
 

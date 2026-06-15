@@ -27,7 +27,7 @@ func (e *engine) registerHandlers() *Handlers {
 
 	// ===== LINKS =====
 	linksRepo := linksRepo.NewRepository(e.redis)
-	linksService := linksService.NewService(linksRepo)
+	linksService := linksService.NewService(linksRepo, e.randomCodeGen)
 	linksHandler := linksHandler.NewHandler(linksService)
 
 	return &Handlers{
