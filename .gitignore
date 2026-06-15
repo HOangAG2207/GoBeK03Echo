@@ -9,9 +9,6 @@ deployment/.env
 
 # Coverage files
 coverage/
-coverage.out
-coverage.tmp
-coverage.html
 
 # Docs Swagger files
 docs/
