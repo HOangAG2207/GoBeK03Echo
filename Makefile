@@ -67,7 +67,17 @@ docker-login:
 .PHONY: docker-release
 docker-release:
 	docker push $(IMAGE_NAME):$(IMAGE_TAG)
-
+.PHONY: docker-test
+docker-test:
+	mkdir -p $(COVERAGE_FOLDER)
+	docker buildx build --build-arg COVERAGE_EXCLUDE="$(COVERAGE_EXCLUDE)" --target test -t bookmark_service:dev --output $(COVERAGE_FOLDER) .
+	@total=$$(go tool cover -func=$(COVERAGE_FOLDER)/coverage.out | grep total: | awk '{print $$3}' | sed 's/%//'); \
+    if [ $$(echo "$$total < $(COVERAGE_THRESHOLD)" | bc -l) -eq 1 ]; then \
+	   echo "❌ Coverage ($$total%) is below threshold ($(COVERAGE_THRESHOLD)%)"; \
+	   exit 1; \
+    else \
+	   echo "✅ Coverage ($$total%) meets threshold ($(COVERAGE_THRESHOLD)%)"; \
+   	fi	
 # ========================
 # Optional (dev only)
 # ========================

@@ -1,0 +1,55 @@
+name: ci-pure-pipeline
+
+on:
+  pull_request:
+    branches: ["main"]
+  push:
+    branches: 
+      - main
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+
+jobs:
+  ci-pure-pipeline:
+    # ========================
+    # Plasforms
+    # ========================
+    runs-on: ubuntu-latest
+    # ========================
+    # Variables Environment
+    # ========================
+    env:
+      IMAGE_NAME: ${{ secrets.DOCKER_HUB_USERNAME }}/gobek03echo
+      IMAGE_TAG: dev
+      DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+      DOCKER_HUB_ACCESS_TOKEN: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+    steps:
+      # ========================
+      # Test
+      # ========================
+      - name: Run Action checkout
+        uses: actions/checkout@v4
+      # ========================
+      # Test with docker
+      # ========================
+      - name: Run test
+        run: make docker-test
+      # ========================
+      # Build docker image
+      # ========================
+      - name: Build image
+        run: make docker-build
+      # ========================
+      # Login DockerHub
+      # ========================
+      - name: Login DockerHub
+        if: github.event_name != 'pull_request'
+        run: make docker-login
+      # ========================
+      # Push docker image
+      # ========================
+      - name: Push image
+        if: github.event_name != 'pull_request'
+        run: make docker-release
+
+    
