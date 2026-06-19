@@ -99,10 +99,9 @@ test: clean
 	grep -v -E "$(COVERAGE_EXCLUDE)" $(COVERAGE_FOLDER)/coverage.tmp > $(COVERAGE_FOLDER)/coverage.out
 	go tool cover -html=$(COVERAGE_FOLDER)/coverage.out -o $(COVERAGE_FOLDER)/coverage.html
 	@total=$$(go tool cover -func=$(COVERAGE_FOLDER)/coverage.out | grep total: | awk '{print $$3}' | sed 's/%//'); \
-	awk "BEGIN {exit !($$total < $(COVERAGE_THRESHOLD))}"; \
-	if [ $$? -eq 0 ]; then \
-		echo "[FAIL] Coverage ($$total%) is below threshold ($(COVERAGE_THRESHOLD)%)"; \
-		exit 1; \
-	else \
-		echo "[PASS] Coverage ($$total%) meets threshold ($(COVERAGE_THRESHOLD)%)"; \
-	fi
+    if [ $$(echo "$$total < $(COVERAGE_THRESHOLD)" | bc -l) -eq 1 ]; then \
+	   echo "❌ Coverage ($$total%) is below threshold ($(COVERAGE_THRESHOLD)%)"; \
+	   exit 1; \
+    else \
+	   echo "✅ Coverage ($$total%) meets threshold ($(COVERAGE_THRESHOLD)%)"; \
+   	fi
