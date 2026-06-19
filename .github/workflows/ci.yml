@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      IMAGE_NAME: ${{ secrets.DOCKER_HUB_USERNAME }}/your-image
+      IMAGE_NAME: ${{ secrets.DOCKER_HUB_USERNAME }}/gobek03echo
       IMAGE_TAG: dev
 
     steps:
