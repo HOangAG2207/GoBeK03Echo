@@ -1,5 +1,3 @@
-.PHONY: run swagger-gen
-
 # ========================
 # Variables
 # ========================
@@ -9,11 +7,13 @@ GO_TEST_ARGS := -v -cover
 # ========================
 # Run app
 # ========================
+.PHONY: run
 run:swagger-gen
 	go run ./cmd/api/main.go
 # ========================
 # Run app
 # ========================
+.PHONY: swagger-gen
 swagger-gen:
 	swag init -g ./cmd/api/main.go --output ./docs
 # ========================
@@ -21,6 +21,7 @@ swagger-gen:
 # ========================
 
 # Run single test function
+.PHONY: test-one
 test-one:
 ifndef t
 	$(error ❌ Missing test name: use t=<NameOfTest>)
@@ -31,6 +32,7 @@ endif
 	$(GO_TEST) $(GO_TEST_ARGS) -run $(t) $(folder)
 
 # Run all tests in a package
+.PHONY: test-all
 test-all:
 ifndef folder
 	$(error ❌ Missing package path: use folder=./internal/...)
