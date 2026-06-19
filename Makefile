@@ -5,7 +5,19 @@ GO_TEST := go test
 GO_TEST_ARGS := -v -cover
 
 IMAGE_NAME ?= gin227/gobek03echo
-IMAGE_TAG ?= dev
+GIT_TAG := $(shell git describe --tags --exact-match --abbrev=0 2>/dev/null)
+BRANCH := $(shell git rev-parse --abbrev-ref HEAD)
+IMG_TAG := temporary
+
+ifeq ($(BRANCH), main)
+	IMG_TAG := dev
+endif
+
+ifneq ($(GIT_TAG),)
+	IMG_TAG := $(GIT_TAG)
+endif
+
+export IMG_TAG
 
 COVERAGE_EXCLUDE=infrastructure|mocks|test|docs|main.go|config.go|client.go|api|utils
 COVERAGE_THRESHOLD = 80
