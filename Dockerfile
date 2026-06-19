@@ -11,7 +11,7 @@ WORKDIR /opt/app
 RUN apk add --no-cache build-base
 
 # Copy file go.mod và go.sum trước để tận dụng cache layer
-COPY go.mod go sum ./
+COPY go.mod go.sum ./
 # Download dependency (được cache nếu go.mod/go.sum không đổi)
 RUN go mod download
 
