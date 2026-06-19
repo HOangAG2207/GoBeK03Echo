@@ -4,7 +4,7 @@ RUN mkdir -p /opt/app
 
 WORKDIR /opt/app
 
-RUN apk build-base
+RUN apk add build-base
 
 COPY go.mod ./go.mod
 COPY go.sum ./go.sum
