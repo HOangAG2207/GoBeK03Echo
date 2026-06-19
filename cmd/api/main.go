@@ -3,10 +3,7 @@ package main
 import (
 	"log"
 
-	"github.com/HOangAG2207/GoBeK03Echo/internal/api"
-	pkglogger "github.com/HOangAG2207/GoBeK03Echo/pkg/logger"
-	pkgredis "github.com/HOangAG2207/GoBeK03Echo/pkg/redis"
-	pkgutils "github.com/HOangAG2207/GoBeK03Echo/pkg/utils"
+	"github.com/HOangAG2207/GoBeK03Echo/internal/infrastructure"
 )
 
 // @title           GoBe K03 Project API
@@ -24,26 +21,7 @@ import (
 // @tag.name        Health
 // @tag.name        Links
 func main() {
-
-	cfg, err := api.NewConfig()
-
-	if err != nil {
-		log.Fatalf("failed to load config: %v", err)
-	}
-
-	redisClient, err := pkgredis.NewClient("")
-	if err != nil {
-		panic(err)
-	}
-	if err := pkglogger.SetLogLevel(); err != nil {
-		panic(err)
-	}
-
-	app := api.NewEngine(&api.EngineOpts{
-		Cfg:           cfg,
-		Redis:         redisClient,
-		RandomCodeGen: pkgutils.NewCodeGenerator(),
-	})
+	app := infrastructure.CreateAPI()
 
 	// Start server (chạy HTTP server)
 	if err := app.Start(); err != nil {
