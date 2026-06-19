@@ -7,13 +7,11 @@ FROM golang:alpine AS base
 RUN mkdir -p /opt/app
 WORKDIR /opt/app
 
-# RUN apk add build-base
-# Cài thêm git (cần thiết nếu go mod download dùng repo private/public)
-RUN apk add --no-cache git
+# Cài thêm build-base
+RUN apk add --no-cache build-base
 
 # Copy file go.mod và go.sum trước để tận dụng cache layer
-COPY go.mod ./go.mod
-COPY go.sum ./go.sum
+COPY go.mod go sum ./
 # Download dependency (được cache nếu go.mod/go.sum không đổi)
 RUN go mod download
 
