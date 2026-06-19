@@ -18,7 +18,9 @@ jobs:
           go-version: '1.24'
 
       - name: Run unit test
-        run: make test
+        run: |
+          set -ex
+          make test
 
       - name: Login to Docker hub
         if: ${{ github.event_name != 'pull_request'}}
