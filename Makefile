@@ -5,7 +5,7 @@ GO_TEST := go test
 GO_TEST_ARGS := -v -cover
 
 IMAGE_NAME ?= gin227/gobek03echo
-IMAGE_TAG ?= dev
+IMAGE_TAG_DEV ?= dev
 
 COVERAGE_EXCLUDE=infrastructure|mocks|test|docs|main.go|config.go|client.go|api|utils
 COVERAGE_THRESHOLD = 80
