@@ -42,6 +42,7 @@ endif
 
 # Generate mock trong 1 package cụ thể
 # Usage: make mock-one folder=./internal/service
+.PHONY: mock-one
 mock-one:
 ifndef folder
 	$(error ❌ Missing folder: use folder=./internal/...)
@@ -51,40 +52,37 @@ endif
 
 # Generate toàn bộ mock trong project
 # Usage: make mock-all
+.PHONY: mock-all
 mock-all:
 	@echo "→ Generating all mocks..."
 	go generate ./...
 
 # ========================
+# Variables
+# ========================
+IMAGE_NAME ?= your-dockerhub-username/your-image
+IMAGE_TAG ?= latest
+# ========================
 # Docker login
 # ========================
+.PHONY: docker-login
 docker-login:
 	docker login
 # ========================
 # Docker hub image build
 # ========================
-docker-build: swagger-gen
-ifndef name
-	$(error ❌ Missing image name: use name=<Name Of Image>)
-endif
-ifndef tag
-	$(error ❌ Missing tag: use tag=<Name of Tag image>)
-endif
-	docker build -t $(name):$(tag) .
+.PHONY: docker-build
+docker-build:swagger-gen
+	docker build -t $(IMAGE_NAME):$(IMAGE_TAG) .
 # ========================
 # Docker hub image push
 # ========================
+.PHONY: docker-release
 docker-release:
-ifndef name
-	$(error ❌ Missing image name: use name=<Name Of Image>)
-endif
-ifndef tag
-	$(error ❌ Missing tag: use tag=<Name of Tag image>)
-endif
-	docker push $(name):$(tag)
+	docker push $(IMAGE_NAME):$(IMAGE_TAG)
 
 # ========================
-# Coverage
+# Coverage - unit test (using Ci)
 # ========================
 COVERAGE_EXCLUDE=infrastructure|mocks|test|docs|main.go|config.go|client.go|api|utils
 COVERAGE_THRESHOLD = 80
