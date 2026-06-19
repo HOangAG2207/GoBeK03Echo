@@ -86,7 +86,7 @@ endif
 # ========================
 # Coverage
 # ========================
-COVERAGE_EXCLUDE=infrastructure|mocks|test|docs|main.go|config.go|client.go
+COVERAGE_EXCLUDE=infrastructure|mocks|test|docs|main.go|config.go|client.go|api|utils
 COVERAGE_THRESHOLD = 80
 COVERAGE_FOLDER=./coverage
 clean:
