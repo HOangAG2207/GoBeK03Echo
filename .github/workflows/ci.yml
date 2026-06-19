@@ -14,7 +14,7 @@ jobs:
 
     env:
       IMAGE_NAME: ${{ secrets.DOCKER_HUB_USERNAME }}/gobek03echo
-      IMAGE_TAG: dev1
+      IMAGE_TAG: dev
 
     steps:
       - uses: actions/checkout@v4
