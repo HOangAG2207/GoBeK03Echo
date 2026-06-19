@@ -89,10 +89,12 @@ endif
 COVERAGE_EXCLUDE=infrastructure|mocks|test|docs|main.go|config.go|client.go|api|utils
 COVERAGE_THRESHOLD = 80
 COVERAGE_FOLDER=./coverage
+.PHONY: clean
 clean:
 	go clean -testcache
 	rm -rf $(COVERAGE_FOLDER)
 # 	docker rm -f redis || true
+.PHONY: test
 test: clean
 	mkdir -p $(COVERAGE_FOLDER)
 
