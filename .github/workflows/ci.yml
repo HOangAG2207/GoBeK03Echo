@@ -1,31 +1,43 @@
-  name: ci-pipeline
+name: ci-pipeline
 
-  on:
-    pull_request:
-      branches: [main]
-    push:
-      branches:
-        - main
-      tags: ['v[0-9]+.[0-9]+.[0-9]+']
-  jobs:
-    ci:
-      runs-on: ubuntu-latest
-      env:
-        IMAGE_NAME: ${{ secrets.DOCKER_HUB_USERNAME }}/gobek03echo
-        IMAGE_TAG: dev
-      steps:
+on:
+  pull_request:
+    branches: ["main"]
+  push:
+    branches: ["main"]
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+
+    env:
+      IMAGE_NAME: ${{ secrets.DOCKER_HUB_USERNAME }}/your-image
+      IMAGE_TAG: dev
+
+    steps:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-go@v6
         with:
-          go-version: "1.25"
+          go-version: "1.24"
 
+      # ========================
+      # Test
+      # ========================
       - name: Run test
         run: make test
 
+      # ========================
+      # Build Docker
+      # ========================
       - name: Build image
         run: make docker-build
 
+      # ========================
+      # Login DockerHub
+      # ========================
       - name: Login DockerHub
         if: github.event_name != 'pull_request'
         run: make docker-login
@@ -33,6 +45,9 @@
           DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
           DOCKER_HUB_ACCESS_TOKEN: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
+      # ========================
+      # Push image
+      # ========================
       - name: Push image
         if: github.event_name != 'pull_request'
         run: make docker-release
