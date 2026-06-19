@@ -28,7 +28,7 @@ jobs:
       # Test
       # ========================
       - name: Run Action checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       # ========================
       # Test with docker
       # ========================
