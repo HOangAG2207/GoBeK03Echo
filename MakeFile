@@ -95,13 +95,17 @@ clean:
 # 	docker rm -f redis || true
 test: clean
 	mkdir -p $(COVERAGE_FOLDER)
+
 	go test ./... -coverprofile=$(COVERAGE_FOLDER)/coverage.tmp -covermode=atomic -coverpkg=./... -p 1
-	grep -v -E "$(COVERAGE_EXCLUDE)" $(COVERAGE_FOLDER)/coverage.tmp > $(COVERAGE_FOLDER)/coverage.out
-	go tool cover -html=$(COVERAGE_FOLDER)/coverage.out -o $(COVERAGE_FOLDER)/coverage.html
+
+	grep -v -E "$(COVERAGE_EXCLUDE)" $(COVERAGE_FOLDER)/coverage.tmp > $(COVERAGE_FOLDER)/coverage.out || true
+
+	go tool cover -html=$(COVERAGE_FOLDER)/coverage.out -o $(COVERAGE_FOLDER)/coverage.html || true
+
 	@total=$$(go tool cover -func=$(COVERAGE_FOLDER)/coverage.out | grep total: | awk '{print $$3}' | sed 's/%//'); \
-    if [ $$(echo "$$total < $(COVERAGE_THRESHOLD)" | bc -l) -eq 1 ]; then \
-	   echo "❌ Coverage ($$total%) is below threshold ($(COVERAGE_THRESHOLD)%)"; \
-	   exit 1; \
-    else \
-	   echo "✅ Coverage ($$total%) meets threshold ($(COVERAGE_THRESHOLD)%)"; \
-   	fi
+	if awk "BEGIN {exit !($$total >= $(COVERAGE_THRESHOLD))}"; then \
+		echo "[PASS] Coverage ($$total%) meets threshold ($(COVERAGE_THRESHOLD)%)"; \
+	else \
+		echo "[FAIL] Coverage ($$total%) is below threshold ($(COVERAGE_THRESHOLD)%)"; \
+		exit 1; \
+	fi
