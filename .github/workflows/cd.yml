@@ -10,7 +10,7 @@ jobs:
       github.event.workflow_run.conclusion == 'success' &&
       github.event.workflow_run.event == 'push' &&
       contains(['main'], github.event.workflow_run.head_branch)
-    runs_on: self-hosted
+    runs-on: self-hosted
     steps:
       - name: Deploy app-api via docker-compose
         working-directory: /opt/GoBeK03Echo/deployment/linux
