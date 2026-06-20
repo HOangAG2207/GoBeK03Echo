@@ -1,0 +1,23 @@
+name: cd-pipeline
+
+on:
+  workflow_run:
+    workflows: ["ci-pipeline"]
+    types: ["completed"]
+jobs:
+  cd_pipeline:
+    if: >
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'push' &&
+      contains(['main'], github.event.workflow_run.head_branch)
+    runs_on: self-hosted
+    steps:
+      - name: Deploy app-api via docker-compose
+        working-directory: /opt/GoBeK03Echo/deployment/linux
+        run: |
+          echo "🚀 Deploying app-api..."
+          docker-compose rm -f app-api
+          docker-compose pull app-api
+          docker-compose up -d
+
+          docker system prune -f
