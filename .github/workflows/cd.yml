@@ -16,8 +16,8 @@ jobs:
         working-directory: /opt/GoBeK03Echo/deployment/linux
         run: |
           echo "🚀 Deploying app-api..."
-          docker-compose rm -f app-api
-          docker-compose pull app-api
+          docker-compose rm -f app
+          docker-compose pull app
           docker-compose up -d
 
           docker system prune -f
