@@ -17,7 +17,7 @@ jobs:
         run: |
           echo "🚀 Deploying app-api..."
           docker-compose rm -f app
-          docker-compose pull app
+          docker-compose pull
           docker-compose up -d
 
           docker system prune -f
