@@ -12,3 +12,5 @@ coverage/
 
 # Docs Swagger files
 docs/
+# Data for psql
+data/
