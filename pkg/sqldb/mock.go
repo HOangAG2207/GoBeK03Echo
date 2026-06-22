@@ -18,7 +18,7 @@ func InitMockDB(t *testing.T) *gorm.DB {
 	})
 
 	if err != nil {
-		t.Fatalf("Fail to create db: %v", err)
+		t.Fatalf("Fail to create test db: %v", err)
 	}
 
 	return db
