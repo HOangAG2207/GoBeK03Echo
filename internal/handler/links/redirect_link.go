@@ -17,8 +17,8 @@ import (
 // @Param        code   path      string  true  "Short URL code"
 // @Success      302    {string}  string  "Found - Redirect via Location header"
 // @Header       302    {string}  Location  "Original URL"
-// @Failure      404    {object}  utils.ErrorResponse "URL not found"
-// @Failure      500    {object}  utils.ErrorResponse "Internal server error"
+// @Failure      404    {object}  helpers.ErrorResponse "URL not found"
+// @Failure      500    {object}  helpers.ErrorResponse "Internal server error"
 // @Router       /v1/links/redirect/{code} [get]
 func (h *handler) RedirectLink(ctx echo.Context) error {
 	code := ctx.Param("code")

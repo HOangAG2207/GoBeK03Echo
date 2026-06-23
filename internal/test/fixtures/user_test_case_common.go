@@ -24,7 +24,7 @@ func (u *UserCommonTestDB) GenerateData() error {
 			Username:    "hoang01",
 			Email:       "hoang01@gmail.com",
 			Password:    "123456",
-			DisplayName: "hoang01",
+			Displayname: "hoang01",
 		},
 		{
 			Base: model.Base{
@@ -33,7 +33,7 @@ func (u *UserCommonTestDB) GenerateData() error {
 			Username:    "hoang02",
 			Email:       "hoang02@gmail.com",
 			Password:    "123456",
-			DisplayName: "hoang02",
+			Displayname: "hoang02",
 		},
 	}
 	return db.CreateInBatches(users, 10).Error

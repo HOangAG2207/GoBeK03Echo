@@ -18,8 +18,8 @@ import (
 // @Produce      json
 // @Param		 request body model.ShortenURLRequest true "Shorten URL request (exp must be > 0)"
 // @Success      200  {object}  model.ShortenURLSwaggerResponse
-// @Failure      400  {object}  utils.ErrorResponse
-// @Failure      500  {object}  utils.ErrorResponse
+// @Failure      400  {object}  helpers.ErrorResponse
+// @Failure      500  {object}  helpers.ErrorResponse
 // @Router       /v1/links/shorten [post]
 func (h *handler) ShortenLink(ctx echo.Context) error {
 	req := new(model.ShortenURLRequest)

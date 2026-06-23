@@ -14,7 +14,7 @@ func (s *service) CreateUser(ctx context.Context, displayName, userName, passWor
 	newUser := &model.User{
 		Username:    userName,
 		Password:    hashedPassword,
-		DisplayName: displayName,
+		Displayname: displayName,
 		Email:       email,
 	}
 	createdUser, err := s.userRepo.CreateUser(ctx, newUser)

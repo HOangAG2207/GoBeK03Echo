@@ -32,7 +32,7 @@ func TestRepository_CreateUser(t *testing.T) {
 				Base: model.Base{
 					ID: "de305d54-75b4-431b-adb2-eb6b9e546090",
 				},
-				DisplayName: "New User 01",
+				Displayname: "New User 01",
 				Username:    "New User 01",
 				Password:    "$2a$10$xxx",
 				Email:       "newuser01@example.com",
@@ -41,7 +41,7 @@ func TestRepository_CreateUser(t *testing.T) {
 				Base: model.Base{
 					ID: "de305d54-75b4-431b-adb2-eb6b9e546090",
 				},
-				DisplayName: "New User 01",
+				Displayname: "New User 01",
 				Username:    "New User 01",
 				Email:       "newuser01@example.com",
 				// ⚠️ Password thường không assert trực tiếp (hash có thể khác)
@@ -56,7 +56,7 @@ func TestRepository_CreateUser(t *testing.T) {
 				assert.Equal(t, user.ID, checkUser.ID)
 				assert.Equal(t, user.Username, checkUser.Username)
 				assert.Equal(t, user.Email, checkUser.Email)
-				assert.Equal(t, user.DisplayName, checkUser.DisplayName)
+				assert.Equal(t, user.Displayname, checkUser.Displayname)
 			},
 		},
 		{
@@ -68,7 +68,7 @@ func TestRepository_CreateUser(t *testing.T) {
 				Base: model.Base{
 					ID: "de305d54-75b4-431b-adb2-eb6b9e546090",
 				},
-				DisplayName: "New User 01",
+				Displayname: "New User 01",
 				Username:    "New User 02",
 				Password:    "$2a$10$xxx",
 				Email:       "hoang01@gmail.com",
@@ -85,7 +85,7 @@ func TestRepository_CreateUser(t *testing.T) {
 				Base: model.Base{
 					ID: "de305d54-75b4-431b-adb2-eb6b9e546091",
 				},
-				DisplayName: "Another User",
+				Displayname: "Another User",
 				Username:    "hoang01",
 				Password:    "$2a$10$xxx",
 				Email:       "another@example.com",
@@ -121,7 +121,7 @@ func TestRepository_CreateUser(t *testing.T) {
 			assert.Equal(t, tc.expectedOutput.ID, result.ID)
 			assert.Equal(t, tc.expectedOutput.Username, result.Username)
 			assert.Equal(t, tc.expectedOutput.Email, result.Email)
-			assert.Equal(t, tc.expectedOutput.DisplayName, result.DisplayName)
+			assert.Equal(t, tc.expectedOutput.Displayname, result.Displayname)
 
 			// ⚠️ Password: không nên assert equality nếu có hash
 			// assert.Equal(t, tc.expectedOutput.Password, result.Password)

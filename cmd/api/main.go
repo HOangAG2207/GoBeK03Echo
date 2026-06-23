@@ -20,6 +20,7 @@ import (
 // Tags phân loại API (sử dụng trong Swagger UI)
 // @tag.name        Health
 // @tag.name        Links
+// @tag.name		User
 func main() {
 	app := infrastructure.CreateAPI()
 

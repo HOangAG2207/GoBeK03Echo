@@ -19,7 +19,7 @@ func main() {
 		Username:    "hoàng",
 		Email:       "hoang@gmail.com",
 		Password:    "juwdhuwhd",
-		DisplayName: "HOàng",
+		Displayname: "HOàng",
 	}
 	repo := userRepo.NewRepository(dbClient)
 	_, err = repo.CreateUser(context.Background(), &user)

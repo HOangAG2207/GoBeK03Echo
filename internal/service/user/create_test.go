@@ -39,7 +39,7 @@ func TestService_CreateUser(t *testing.T) {
 				repoMock.On("CreateUser", ctx, &model.User{
 					Username:    "testuser",
 					Password:    "$2a$10$7EqJtq98hPqEX7fNZaFWoOHi6rS8nY7b1p6K5j5p6v5Q5Z5Z5Z5e",
-					DisplayName: "Test User",
+					Displayname: "Test User",
 					Email:       "testuser@example.com",
 				}).Return(&model.User{
 					Base: model.Base{
@@ -47,7 +47,7 @@ func TestService_CreateUser(t *testing.T) {
 					},
 					Username:    "testuser",
 					Password:    "$2a$10$7EqJtq98hPqEX7fNZaFWoOHi6rS8nY7b1p6K5j5p6v5Q5Z5Z5Z5e",
-					DisplayName: "Test User",
+					Displayname: "Test User",
 					Email:       "testuser@example.com",
 				}, nil)
 				return repoMock
@@ -62,7 +62,7 @@ func TestService_CreateUser(t *testing.T) {
 				},
 				Username:    "testuser",
 				Password:    "$2a$10$7EqJtq98hPqEX7fNZaFWoOHi6rS8nY7b1p6K5j5p6v5Q5Z5Z5Z5e",
-				DisplayName: "Test User",
+				Displayname: "Test User",
 				Email:       "testuser@example.com",
 			},
 		},
@@ -100,7 +100,7 @@ func TestService_CreateUser(t *testing.T) {
 				repoMock.On("CreateUser", ctx, &model.User{
 					Username:    "testuser3",
 					Password:    "$2a$10$7EqJtq98hPqEX7fNZaFWoOHi6rS8nY7b1p6K5j5p6v5Q5Z5Z5Z5e",
-					DisplayName: "Test User 3",
+					Displayname: "Test User 3",
 					Email:       "testuser3@example.com",
 				}).Return(nil, assert.AnError)
 				return repoMock

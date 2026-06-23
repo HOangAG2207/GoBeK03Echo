@@ -3,15 +3,19 @@ package api
 import (
 	healthHandler "github.com/HOangAG2207/GoBeK03Echo/internal/handler/health"
 	linksHandler "github.com/HOangAG2207/GoBeK03Echo/internal/handler/links"
+	userHandler "github.com/HOangAG2207/GoBeK03Echo/internal/handler/user"
 	healthRepo "github.com/HOangAG2207/GoBeK03Echo/internal/repository/health"
 	linksRepo "github.com/HOangAG2207/GoBeK03Echo/internal/repository/links"
+	userRepo "github.com/HOangAG2207/GoBeK03Echo/internal/repository/user"
 	healthService "github.com/HOangAG2207/GoBeK03Echo/internal/service/health"
 	linksService "github.com/HOangAG2207/GoBeK03Echo/internal/service/links"
+	userService "github.com/HOangAG2207/GoBeK03Echo/internal/service/user"
 )
 
 type Handlers struct {
 	Health healthHandler.Handler
 	Links  linksHandler.Handler
+	User   userHandler.Handler
 }
 
 func (e *engine) registerHandlers() *Handlers {
@@ -30,8 +34,14 @@ func (e *engine) registerHandlers() *Handlers {
 	linksService := linksService.NewService(linksRepo, e.randomCodeGen)
 	linksHandler := linksHandler.NewHandler(linksService)
 
+	// ===== User =====
+	userRepo := userRepo.NewRepository(e.db)
+	userService := userService.NewService(userRepo, e.passHashing)
+	userHandler := userHandler.NewHandler(userService)
+
 	return &Handlers{
 		Health: healthHandler,
 		Links:  linksHandler,
+		User:   userHandler,
 	}
 }

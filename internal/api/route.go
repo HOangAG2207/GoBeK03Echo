@@ -23,4 +23,8 @@ func (e *engine) initRoutes() {
 	api.POST("/links/shorten", h.Links.ShortenLink)
 	// - Redirect link from code
 	api.GET("/links/redirect/:code", h.Links.RedirectLink)
+
+	// User
+	// - Register User
+	api.POST("/users/register", h.User.Register)
 }

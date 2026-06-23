@@ -1,5 +1,14 @@
 basePath: /
 definitions:
+  helpers.ErrorResponse:
+    properties:
+      error: {}
+      info:
+        type: string
+      status:
+        example: "false"
+        type: string
+    type: object
   model.HealthCheckSwaggerResponse:
     properties:
       info:
@@ -9,6 +18,15 @@ definitions:
       message:
         type: string
       service_name:
+        type: string
+      status:
+        type: string
+    type: object
+  model.RegisterUserSwaggerResponse:
+    properties:
+      data:
+        $ref: '#/definitions/model.User'
+      message:
         type: string
       status:
         type: string
@@ -34,14 +52,37 @@ definitions:
       status:
         type: string
     type: object
-  utils.ErrorResponse:
+  model.User:
     properties:
-      error: {}
-      info:
+      created_at:
         type: string
-      status:
-        example: "false"
+      display_name:
         type: string
+      email:
+        type: string
+      id:
+        type: string
+      updated_at:
+        type: string
+      username:
+        type: string
+    type: object
+  model.UserRegisterRequest:
+    properties:
+      display_name:
+        type: string
+      email:
+        type: string
+      password:
+        minLength: 8
+        type: string
+      username:
+        type: string
+    required:
+    - display_name
+    - email
+    - password
+    - username
     type: object
 host: localhost:8081
 info:
@@ -66,7 +107,7 @@ paths:
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/utils.ErrorResponse'
+            $ref: '#/definitions/helpers.ErrorResponse'
       summary: Check service health
       tags:
       - Health
@@ -91,11 +132,11 @@ paths:
         "404":
           description: URL not found
           schema:
-            $ref: '#/definitions/utils.ErrorResponse'
+            $ref: '#/definitions/helpers.ErrorResponse'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/utils.ErrorResponse'
+            $ref: '#/definitions/helpers.ErrorResponse'
       summary: Redirect short URL
       tags:
       - Links
@@ -121,17 +162,48 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/utils.ErrorResponse'
+            $ref: '#/definitions/helpers.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/utils.ErrorResponse'
+            $ref: '#/definitions/helpers.ErrorResponse'
       summary: Shorten URL
       tags:
       - Links
+  /v1/users/register:
+    post:
+      consumes:
+      - application/json
+      description: Create a new user with the provided information
+      parameters:
+      - description: User to create
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/model.UserRegisterRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/model.RegisterUserSwaggerResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/helpers.ErrorResponse'
+      summary: Create a new user
+      tags:
+      - User
 schemes:
 - http
 swagger: "2.0"
 tags:
 - name: Health
 - name: Links
+- name: User

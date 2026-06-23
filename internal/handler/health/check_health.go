@@ -13,7 +13,7 @@ import (
 // @Tags         Health
 // @Produce      json
 // @Success      200 {object} model.HealthCheckSwaggerResponse
-// @Failure      500 {object} utils.ErrorResponse
+// @Failure      500 {object} helpers.ErrorResponse
 // @Router       /v1/health-check [get]
 func (h *handler) CheckHealth(c echo.Context) error {
 	response, err := h.service.CheckHealth(c.Request().Context())

@@ -6,6 +6,7 @@ import (
 	"github.com/HOangAG2207/GoBeK03Echo/internal/api"
 	pkglogger "github.com/HOangAG2207/GoBeK03Echo/pkg/logger"
 	pkgredis "github.com/HOangAG2207/GoBeK03Echo/pkg/redis"
+	pkgdb "github.com/HOangAG2207/GoBeK03Echo/pkg/sqldb"
 	pkgutils "github.com/HOangAG2207/GoBeK03Echo/pkg/utils"
 )
 
@@ -24,6 +25,10 @@ func CreateAPI() api.Engine {
 	if err != nil {
 		panic(err)
 	}
+	dbClient, err := pkgdb.NewClient("")
+	if err != nil {
+		panic(err)
+	}
 	if err := pkglogger.SetLogLevel(); err != nil {
 		panic(err)
 	}
@@ -31,6 +36,8 @@ func CreateAPI() api.Engine {
 		Cfg:           cfg,
 		Redis:         redisClient,
 		RandomCodeGen: pkgutils.NewCodeGenerator(),
+		PassHashing:   pkgutils.NewPasswordHashing(),
+		DB:            dbClient,
 	})
 	return appEngine
 }

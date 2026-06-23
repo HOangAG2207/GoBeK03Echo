@@ -9,6 +9,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/redis/go-redis/v9"
+	"gorm.io/gorm"
 )
 
 type Engine interface {
@@ -20,13 +21,17 @@ type engine struct {
 	app           *echo.Echo
 	config        *Config
 	redis         *redis.Client
+	db            *gorm.DB
 	randomCodeGen pkgutils.CodeGenerator
+	passHashing   pkgutils.PasswordHashing
 }
 
 type EngineOpts struct {
 	Cfg           *Config
 	Redis         *redis.Client
+	DB            *gorm.DB
 	RandomCodeGen pkgutils.CodeGenerator
+	PassHashing   pkgutils.PasswordHashing
 }
 
 func NewEngine(opts *EngineOpts) Engine {
@@ -34,7 +39,9 @@ func NewEngine(opts *EngineOpts) Engine {
 		app:           echo.New(),
 		config:        opts.Cfg,
 		redis:         opts.Redis,
+		db:            opts.DB,
 		randomCodeGen: opts.RandomCodeGen,
+		passHashing:   opts.PassHashing,
 	}
 
 	e.initMiddleware()
