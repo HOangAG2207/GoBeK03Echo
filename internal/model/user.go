@@ -1,11 +1,13 @@
 package model
 
 type User struct {
-	Base               //having ID, UpdatedAt, CreatedAt
-	Username    string `gorm:"unique;not null;column:username" json:"username"`
-	Email       string `gorm:"unique;not null;column:email" json:"email"`
-	Password    string `gorm:"not null;column:password" json:"-"`
-	DisplayName string `gorm:"column:display_name" json:"display_name"`
+	Base
+
+	Username string `json:"username" gorm:"column:username;uniqueIndex;not null"`
+	Email    string `json:"email" gorm:"column:email;uniqueIndex;not null"`
+	Password string `json:"-" gorm:"not null;column:password"`
+
+	DisplayName string `json:"display_name" gorm:"column:display_name"`
 }
 
 func (User) TableName() string {

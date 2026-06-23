@@ -18,7 +18,8 @@ func TestRepository_CreateUser(t *testing.T) {
 		setupMockDB func(t *testing.T) *gorm.DB
 		inputUser   *model.User
 
-		expectedError bool
+		expectedOutput *model.User
+		expectedError  bool
 
 		verifyFunc func(db *gorm.DB, user *model.User)
 	}{
@@ -33,9 +34,19 @@ func TestRepository_CreateUser(t *testing.T) {
 				},
 				DisplayName: "New User 01",
 				Username:    "New User 01",
-				Password:    "$2a$10$7EqJtq98hPqEX7fNZaFWoOHi6rS8nY7b1p6K5j5p6v5Q5Z5Z5Z5e",
+				Password:    "$2a$10$xxx",
 				Email:       "newuser01@example.com",
 			},
+			expectedOutput: &model.User{
+				Base: model.Base{
+					ID: "de305d54-75b4-431b-adb2-eb6b9e546090",
+				},
+				DisplayName: "New User 01",
+				Username:    "New User 01",
+				Email:       "newuser01@example.com",
+				// ⚠️ Password thường không assert trực tiếp (hash có thể khác)
+			},
+			expectedError: false,
 			verifyFunc: func(db *gorm.DB, user *model.User) {
 				checkUser := &model.User{}
 
@@ -47,7 +58,6 @@ func TestRepository_CreateUser(t *testing.T) {
 				assert.Equal(t, user.Email, checkUser.Email)
 				assert.Equal(t, user.DisplayName, checkUser.DisplayName)
 			},
-			expectedError: false,
 		},
 		{
 			name: "Create user fail - duplicate email",
@@ -60,13 +70,11 @@ func TestRepository_CreateUser(t *testing.T) {
 				},
 				DisplayName: "New User 01",
 				Username:    "New User 02",
-				Password:    "$2a$10$7EqJtq98hPqEX7fNZaFWoOHi6rS8nY7b1p6K5j5p6v5Q5Z5Z5Z5e",
+				Password:    "$2a$10$xxx",
 				Email:       "hoang01@gmail.com",
 			},
-			verifyFunc: func(db *gorm.DB, user *model.User) {
-
-			},
-			expectedError: true,
+			expectedOutput: nil,
+			expectedError:  true,
 		},
 		{
 			name: "Create user fail - duplicate username",
@@ -78,36 +86,49 @@ func TestRepository_CreateUser(t *testing.T) {
 					ID: "de305d54-75b4-431b-adb2-eb6b9e546091",
 				},
 				DisplayName: "Another User",
-				Username:    "hoang01", // đã tồn tại trong fixture
-				Password:    "$2a$10$7EqJtq98hPqEX7fNZaFWoOHi6rS8nY7b1p6K5j5p6v5Q5Z5Z5Z5e",
+				Username:    "hoang01",
+				Password:    "$2a$10$xxx",
 				Email:       "another@example.com",
 			},
-			expectedError: true,
-			verifyFunc: func(db *gorm.DB, user *model.User) {
-				// không cần verify vì expected fail
-			},
+			expectedOutput: nil,
+			expectedError:  true,
 		},
 	}
 
 	for _, tc := range testCases {
+		tc := tc // fix race khi dùng t.Parallel
+
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
 
 			ctx := t.Context()
 
 			mockDB := tc.setupMockDB(t)
-
 			repo := NewRepository(mockDB)
 
 			result, err := repo.CreateUser(ctx, tc.inputUser)
+
 			if tc.expectedError {
-				assert.NotNil(t, err)
+				assert.Error(t, err)
+				assert.Nil(t, result)
 				return
 			}
 
 			assert.NoError(t, err)
+			assert.NotNil(t, result)
 
-			tc.verifyFunc(mockDB, result)
+			// ✅ So sánh output
+			assert.Equal(t, tc.expectedOutput.ID, result.ID)
+			assert.Equal(t, tc.expectedOutput.Username, result.Username)
+			assert.Equal(t, tc.expectedOutput.Email, result.Email)
+			assert.Equal(t, tc.expectedOutput.DisplayName, result.DisplayName)
+
+			// ⚠️ Password: không nên assert equality nếu có hash
+			// assert.Equal(t, tc.expectedOutput.Password, result.Password)
+
+			if tc.verifyFunc != nil {
+				tc.verifyFunc(mockDB, result)
+			}
 		})
 	}
 }
