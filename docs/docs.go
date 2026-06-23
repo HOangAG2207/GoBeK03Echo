@@ -216,14 +216,14 @@ const docTemplate = `{
         "model.RegisterUserSwaggerResponse": {
             "type": "object",
             "properties": {
-                "data": {
-                    "$ref": "#/definitions/model.User"
-                },
                 "message": {
                     "type": "string"
                 },
                 "status": {
                     "type": "string"
+                },
+                "user": {
+                    "$ref": "#/definitions/model.User"
                 }
             }
         },

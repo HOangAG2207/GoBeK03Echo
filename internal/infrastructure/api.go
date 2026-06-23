@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"github.com/HOangAG2207/GoBeK03Echo/internal/api"
+	"github.com/HOangAG2207/GoBeK03Echo/internal/model"
 	pkglogger "github.com/HOangAG2207/GoBeK03Echo/pkg/logger"
 	pkgredis "github.com/HOangAG2207/GoBeK03Echo/pkg/redis"
 	pkgdb "github.com/HOangAG2207/GoBeK03Echo/pkg/sqldb"
@@ -29,6 +30,7 @@ func CreateAPI() api.Engine {
 	if err != nil {
 		panic(err)
 	}
+	dbClient.AutoMigrate(&model.User{})
 	if err := pkglogger.SetLogLevel(); err != nil {
 		panic(err)
 	}

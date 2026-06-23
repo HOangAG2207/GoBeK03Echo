@@ -19,7 +19,7 @@ type UserRegisterRequest struct {
 type RegisterUserSwaggerResponse struct {
 	Status  string `json:"status"`
 	Message string `json:"message"`
-	Data    User   `json: "data"`
+	User    User   `json: "data"`
 }
 
 func (User) TableName() string {
