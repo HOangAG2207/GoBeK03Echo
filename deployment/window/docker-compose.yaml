@@ -1,5 +1,7 @@
 version: '3.8'
 
+volumes:
+  postgres-data:
 services:
   postgres:
     image: postgres:16-alpine
@@ -8,9 +10,9 @@ services:
     expose:
       - "5432"
     environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
       # Speed-up init + reduce log noise trên VM nhỏ (locale=C → byte-collation, không cần Unicode)
       POSTGRES_INITDB_ARGS: "--encoding=UTF-8 --locale=C"
     volumes:
@@ -20,21 +22,11 @@ services:
     healthcheck:
       # -U/-d tránh false-positive (server listening nhưng auth/DB chưa ready)
       # -h 127.0.0.1 lock IPv4 (alpine pg_isready default UNIX socket, đôi khi flap)
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB} -h 127.0.0.1"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME} -h 127.0.0.1"]
       interval: 10s
       timeout: 5s
       retries: 5
       start_period: 20s # cold-start init data dir ~10-15s lần đầu
-    # deploy:
-    #   resources:
-    #     limits:
-    #       cpus: "0.5"
-    #       memory: 192M
-    # logging:
-    #   driver: "json-file"
-    #   options:
-    #     max-size: "10m"
-    #     max-file: "3"
 
   redis:
     image: redis:alpine
@@ -59,7 +51,7 @@ services:
       redis:
         condition: service_healthy
     env_file:
-      - ../.env
+      - .env
     networks:
       - app-network
 
