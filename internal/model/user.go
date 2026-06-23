@@ -1,7 +1,7 @@
 package model
 
 type User struct {
-	Base
+	Base               //having ID, UpdatedAt, CreatedAt
 	Username    string `gorm:"unique;not null;column:username" json:"username"`
 	Email       string `gorm:"unique;not null;column:email" json:"email"`
 	Password    string `gorm:"not null;column:password" json:"-"`

@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/HOangAG2207/GoBeK03Echo/internal/model"
 	userRepo "github.com/HOangAG2207/GoBeK03Echo/internal/repository/user"
@@ -23,9 +22,8 @@ func main() {
 		DisplayName: "HOàng",
 	}
 	repo := userRepo.NewRepository(dbClient)
-	create_user, err := repo.CreateUser(context.Background(), &user)
+	err = repo.CreateUser(context.Background(), &user)
 	if err != nil {
 		panic(err)
 	}
-	fmt.Print(create_user)
 }

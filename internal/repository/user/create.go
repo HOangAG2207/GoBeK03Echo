@@ -7,8 +7,10 @@ import (
 )
 
 func (r *repository) CreateUser(ctx context.Context, newUser *model.User) (*model.User, error) {
-	if err := r.db.WithContext(ctx).Create(newUser).Error; err != nil {
+	err := r.db.WithContext(ctx).Create(newUser).Error
+	if err != nil {
 		return nil, err
 	}
+
 	return newUser, nil
 }

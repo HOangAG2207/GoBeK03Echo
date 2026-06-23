@@ -35,7 +35,7 @@ func (b *base) DB() *gorm.DB {
 
 func NewFixtureDB(t *testing.T, fix Fixture) *gorm.DB {
 	// Setup DB
-	fix.SetupDB(pkgdb.InitMockDB(t))
+	fix.SetupDB(pkgdb.CreateTestDB(t))
 
 	// Migrate Schema
 	if err := fix.Migrate(); err != nil {

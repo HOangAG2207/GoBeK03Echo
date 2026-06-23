@@ -10,8 +10,8 @@ import (
 	"gorm.io/gorm/logger"
 )
 
-func InitMockDB(t *testing.T) *gorm.DB {
-	cdn := fmt.Sprintf("file:%s?mode=memory&cache=shared&_foreign_keys=on", uuid.New().String())
+func CreateTestDB(t *testing.T) *gorm.DB {
+	cdn := fmt.Sprintf("file:%s?mode=memory&cache=shared", uuid.New().String())
 
 	db, err := gorm.Open(sqlite.Open(cdn), &gorm.Config{
 		Logger: logger.Default.LogMode(logger.Silent),
