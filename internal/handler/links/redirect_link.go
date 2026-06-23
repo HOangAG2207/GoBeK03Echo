@@ -4,8 +4,8 @@ import (
 	"errors"
 	"net/http"
 
+	"github.com/HOangAG2207/GoBeK03Echo/internal/helpers"
 	"github.com/HOangAG2207/GoBeK03Echo/internal/service/links"
-	"github.com/HOangAG2207/GoBeK03Echo/internal/utils"
 	"github.com/labstack/echo/v4"
 	"github.com/rs/zerolog/log"
 )
@@ -26,10 +26,10 @@ func (h *handler) RedirectLink(ctx echo.Context) error {
 	url, err := h.service.GetLink(ctx.Request().Context(), code)
 	if err != nil {
 		if errors.Is(err, links.ErrCodeNotFound) {
-			return utils.Fail(ctx, http.StatusNotFound, "URL not found", nil)
+			return helpers.Fail(ctx, http.StatusNotFound, "URL not found", nil)
 		}
 		log.Error().Err(err).Str("From", "links.handler.RedirectLink").Msg("Fail to get url from code")
-		return utils.Fail500(ctx, err)
+		return helpers.Fail500(ctx, err)
 	}
 
 	return ctx.Redirect(http.StatusFound, url)

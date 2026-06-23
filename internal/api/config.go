@@ -1,7 +1,7 @@
 package api
 
 import (
-	"github.com/HOangAG2207/GoBeK03Echo/internal/utils"
+	"github.com/HOangAG2207/GoBeK03Echo/internal/helpers"
 	"github.com/joho/godotenv"
 	"github.com/kelseyhightower/envconfig"
 )
@@ -23,7 +23,7 @@ func NewConfig() (*Config, error) {
 		return nil, err
 	}
 	if cfg.InstanceID == "" {
-		cfg.InstanceID = utils.UuidGenerator()
+		cfg.InstanceID = helpers.UuidGenerator()
 	}
 	return &cfg, nil
 }

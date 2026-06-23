@@ -3,7 +3,7 @@ package health
 import (
 	"net/http"
 
-	"github.com/HOangAG2207/GoBeK03Echo/internal/utils"
+	"github.com/HOangAG2207/GoBeK03Echo/internal/helpers"
 	"github.com/labstack/echo/v4"
 )
 
@@ -18,8 +18,8 @@ import (
 func (h *handler) CheckHealth(c echo.Context) error {
 	response, err := h.service.CheckHealth(c.Request().Context())
 	if err != nil {
-		return utils.Fail500(c, err)
+		return helpers.Fail500(c, err)
 	}
 
-	return utils.Success(c, http.StatusOK, "Health check passed", response)
+	return helpers.Success(c, http.StatusOK, "Health check passed", response)
 }

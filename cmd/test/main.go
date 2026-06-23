@@ -22,7 +22,7 @@ func main() {
 		DisplayName: "HOàng",
 	}
 	repo := userRepo.NewRepository(dbClient)
-	err = repo.CreateUser(context.Background(), &user)
+	_, err = repo.CreateUser(context.Background(), &user)
 	if err != nil {
 		panic(err)
 	}

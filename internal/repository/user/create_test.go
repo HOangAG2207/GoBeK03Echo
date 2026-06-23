@@ -68,6 +68,25 @@ func TestRepository_CreateUser(t *testing.T) {
 			},
 			expectedError: true,
 		},
+		{
+			name: "Create user fail - duplicate username",
+			setupMockDB: func(t *testing.T) *gorm.DB {
+				return fixtures_test.NewFixtureDB(t, &fixtures_test.UserCommonTestDB{})
+			},
+			inputUser: &model.User{
+				Base: model.Base{
+					ID: "de305d54-75b4-431b-adb2-eb6b9e546091",
+				},
+				DisplayName: "Another User",
+				Username:    "hoang01", // đã tồn tại trong fixture
+				Password:    "$2a$10$7EqJtq98hPqEX7fNZaFWoOHi6rS8nY7b1p6K5j5p6v5Q5Z5Z5Z5e",
+				Email:       "another@example.com",
+			},
+			expectedError: true,
+			verifyFunc: func(db *gorm.DB, user *model.User) {
+				// không cần verify vì expected fail
+			},
+		},
 	}
 
 	for _, tc := range testCases {

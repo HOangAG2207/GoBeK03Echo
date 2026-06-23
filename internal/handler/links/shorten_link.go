@@ -3,9 +3,9 @@ package links
 import (
 	"net/http"
 
+	"github.com/HOangAG2207/GoBeK03Echo/internal/helpers"
+	"github.com/HOangAG2207/GoBeK03Echo/internal/helpers/validator"
 	"github.com/HOangAG2207/GoBeK03Echo/internal/model"
-	"github.com/HOangAG2207/GoBeK03Echo/internal/utils"
-	"github.com/HOangAG2207/GoBeK03Echo/internal/utils/validator"
 	"github.com/labstack/echo/v4"
 	"github.com/rs/zerolog/log"
 )
@@ -26,11 +26,11 @@ func (h *handler) ShortenLink(ctx echo.Context) error {
 
 	// 1. Bind
 	if err := ctx.Bind(req); err != nil {
-		return utils.Fail(ctx, http.StatusBadRequest, "invalid request body", nil)
+		return helpers.Fail(ctx, http.StatusBadRequest, "invalid request body", nil)
 	}
 	// 2. Validate URL bằng validator
 	if err := validator.ValidateStruct(req); err != nil {
-		return utils.Fail(
+		return helpers.Fail(
 			ctx,
 			http.StatusBadRequest,
 			"validation error",
@@ -47,11 +47,11 @@ func (h *handler) ShortenLink(ctx echo.Context) error {
 	)
 	if err != nil {
 		log.Error().Err(err).Str("From", "links.handler.ShortenLink").Msg("Fail to short url")
-		return utils.Fail500(ctx, nil)
+		return helpers.Fail500(ctx, nil)
 	}
 
 	// 6. Response
-	return utils.Success(
+	return helpers.Success(
 		ctx,
 		http.StatusOK,
 		"Shorten URL generated successfully!",

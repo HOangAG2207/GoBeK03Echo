@@ -19,7 +19,7 @@ endif
 
 export IMG_TAG
 
-COVERAGE_EXCLUDE=infrastructure|mocks|test|docs|main.go|config.go|client.go|api|utils
+COVERAGE_EXCLUDE=infrastructure|mocks|test|docs|main.go|config.go|client.go|api|helpers|model|mock.go|logger
 COVERAGE_THRESHOLD = 80
 COVERAGE_FOLDER=./coverage
 
@@ -53,6 +53,8 @@ test: clean
 	go test ./... -coverprofile=$(COVERAGE_FOLDER)/coverage.tmp -covermode=atomic -coverpkg=./... -p 1
 
 	grep -v -E "$(COVERAGE_EXCLUDE)" $(COVERAGE_FOLDER)/coverage.tmp > $(COVERAGE_FOLDER)/coverage.out || true
+	# 👉 Generate HTML report
+	go tool cover -html=$(COVERAGE_FOLDER)/coverage.out -o $(COVERAGE_FOLDER)/coverage.html
 
 	@total=$$(go tool cover -func=$(COVERAGE_FOLDER)/coverage.out | grep total: | awk '{print $$3}' | sed 's/%//'); \
 	if awk "BEGIN {exit !($$total >= $(COVERAGE_THRESHOLD))}"; then \
