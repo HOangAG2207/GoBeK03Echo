@@ -7,13 +7,13 @@ import (
 )
 
 // @title           GoBe K03 Project API
-// @version         1.0.2
+// @version         1.0.3
 // @description     REST API cho hệ thống GoBe K03 (health check, URL shortener, ...)
 // @description     Sử dụng Echo framework + Redis + Clean Architecture
 
 // @termsOfService  https://example.com/terms
 
-// @host      localhost:8081
+// @host      localhost:8080
 // @BasePath /
 // @schemes http
 

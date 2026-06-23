@@ -8,9 +8,9 @@
         "title": "GoBe K03 Project API",
         "termsOfService": "https://example.com/terms",
         "contact": {},
-        "version": "1.0.2"
+        "version": "1.0.3"
     },
-    "host": "localhost:8081",
+    "host": "localhost:8080",
     "basePath": "/",
     "paths": {
         "/v1/health-check": {

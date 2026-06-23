@@ -84,7 +84,7 @@ definitions:
     - password
     - username
     type: object
-host: localhost:8081
+host: localhost:8080
 info:
   contact: {}
   description: |-
@@ -92,7 +92,7 @@ info:
     Sử dụng Echo framework + Redis + Clean Architecture
   termsOfService: https://example.com/terms
   title: GoBe K03 Project API
-  version: 1.0.2
+  version: 1.0.3
 paths:
   /v1/health-check:
     get:
