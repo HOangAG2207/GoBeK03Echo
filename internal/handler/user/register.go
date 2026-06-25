@@ -16,13 +16,13 @@ import (
 // @Tags         User
 // @Accept       json
 // @Produce      json
-// @Param        user  body      model.UserRegisterRequest  true  "User to create"
+// @Param        user  body      model.RegisterUserRequest  true  "User to create"
 // @Success      201   {object}  model.RegisterUserSwaggerResponse
 // @Failure      400   {object}  helpers.ErrorResponse
 // @Failure      500   {object}  helpers.ErrorResponse
 // @Router       /v1/users/register [post]
 func (h *handler) Register(ctx echo.Context) error {
-	req := new(model.UserRegisterRequest)
+	req := &model.RegisterUserRequest{}
 
 	// 1. Bind
 	if err := ctx.Bind(req); err != nil {
