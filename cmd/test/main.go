@@ -1,29 +1,22 @@
 package main
 
 import (
-	"context"
-
-	"github.com/HOangAG2207/GoBeK03Echo/internal/model"
-	userRepo "github.com/HOangAG2207/GoBeK03Echo/internal/repository/user"
-	pkgdb "github.com/HOangAG2207/GoBeK03Echo/pkg/sqldb"
+	pkgjwt "github.com/HOangAG2207/GoBeK03Echo/pkg/jwt"
+	"github.com/golang-jwt/jwt/v5"
 )
 
 func main() {
-	dbClient, err := pkgdb.NewClient("")
+	jwtGen, err := pkgjwt.NewGeneratorJWT("./private_key.pem")
 	if err != nil {
 		panic(err)
 	}
 
-	dbClient.AutoMigrate(&model.User{})
-	user := model.User{
-		Username:    "hoàng",
-		Email:       "hoang@gmail.com",
-		Password:    "juwdhuwhd",
-		Displayname: "HOàng",
-	}
-	repo := userRepo.NewRepository(dbClient)
-	_, err = repo.CreateUser(context.Background(), &user)
+	tokenStr, err := jwtGen.GenerateJWTToken(jwt.MapClaims{
+		"sub":  "1234",
+		"name": "user1234",
+	})
 	if err != nil {
 		panic(err)
 	}
+	println(tokenStr)
 }

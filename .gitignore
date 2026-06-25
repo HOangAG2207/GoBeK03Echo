@@ -14,3 +14,7 @@ coverage/
 docs/
 # Data for psql
 data/
+
+# RSA keys
+private_key.pem
+public_key.pem
