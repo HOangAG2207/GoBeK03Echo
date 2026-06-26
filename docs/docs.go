@@ -152,7 +152,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.UserRegisterRequest"
+                            "$ref": "#/definitions/user.RegisterUserRequest"
                         }
                     }
                 ],
@@ -160,7 +160,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/model.RegisterUserSwaggerResponse"
+                            "$ref": "#/definitions/user.RegisterUserSwaggerResponse"
                         }
                     },
                     "400": {
@@ -210,20 +210,6 @@ const docTemplate = `{
                 },
                 "status": {
                     "type": "string"
-                }
-            }
-        },
-        "model.RegisterUserSwaggerResponse": {
-            "type": "object",
-            "properties": {
-                "message": {
-                    "type": "string"
-                },
-                "status": {
-                    "type": "string"
-                },
-                "user": {
-                    "$ref": "#/definitions/model.User"
                 }
             }
         },
@@ -281,7 +267,7 @@ const docTemplate = `{
                 }
             }
         },
-        "model.UserRegisterRequest": {
+        "user.RegisterUserRequest": {
             "type": "object",
             "required": [
                 "display_name",
@@ -301,6 +287,20 @@ const docTemplate = `{
                     "minLength": 8
                 },
                 "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "user.RegisterUserSwaggerResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/model.User"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "status": {
                     "type": "string"
                 }
             }

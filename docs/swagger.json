@@ -149,7 +149,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.UserRegisterRequest"
+                            "$ref": "#/definitions/user.RegisterUserRequest"
                         }
                     }
                 ],
@@ -157,7 +157,7 @@
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/model.RegisterUserSwaggerResponse"
+                            "$ref": "#/definitions/user.RegisterUserSwaggerResponse"
                         }
                     },
                     "400": {
@@ -207,20 +207,6 @@
                 },
                 "status": {
                     "type": "string"
-                }
-            }
-        },
-        "model.RegisterUserSwaggerResponse": {
-            "type": "object",
-            "properties": {
-                "message": {
-                    "type": "string"
-                },
-                "status": {
-                    "type": "string"
-                },
-                "user": {
-                    "$ref": "#/definitions/model.User"
                 }
             }
         },
@@ -278,7 +264,7 @@
                 }
             }
         },
-        "model.UserRegisterRequest": {
+        "user.RegisterUserRequest": {
             "type": "object",
             "required": [
                 "display_name",
@@ -298,6 +284,20 @@
                     "minLength": 8
                 },
                 "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "user.RegisterUserSwaggerResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/model.User"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "status": {
                     "type": "string"
                 }
             }

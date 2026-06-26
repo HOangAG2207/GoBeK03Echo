@@ -22,15 +22,6 @@ definitions:
       status:
         type: string
     type: object
-  model.RegisterUserSwaggerResponse:
-    properties:
-      message:
-        type: string
-      status:
-        type: string
-      user:
-        $ref: '#/definitions/model.User'
-    type: object
   model.ShortenURLRequest:
     properties:
       exp:
@@ -67,7 +58,7 @@ definitions:
       username:
         type: string
     type: object
-  model.UserRegisterRequest:
+  user.RegisterUserRequest:
     properties:
       display_name:
         type: string
@@ -83,6 +74,15 @@ definitions:
     - email
     - password
     - username
+    type: object
+  user.RegisterUserSwaggerResponse:
+    properties:
+      data:
+        $ref: '#/definitions/model.User'
+      message:
+        type: string
+      status:
+        type: string
     type: object
 host: localhost:8080
 info:
@@ -181,14 +181,14 @@ paths:
         name: user
         required: true
         schema:
-          $ref: '#/definitions/model.UserRegisterRequest'
+          $ref: '#/definitions/user.RegisterUserRequest'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/model.RegisterUserSwaggerResponse'
+            $ref: '#/definitions/user.RegisterUserSwaggerResponse'
         "400":
           description: Bad Request
           schema:

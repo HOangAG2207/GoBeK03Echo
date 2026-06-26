@@ -28,8 +28,8 @@ type RegisterUserSwaggerResponse struct {
 // @Tags         User
 // @Accept       json
 // @Produce      json
-// @Param        user  body      model.RegisterUserRequest  true  "User to create"
-// @Success      201   {object}  model.RegisterUserSwaggerResponse
+// @Param        user  body      RegisterUserRequest  true  "User to create"
+// @Success      201   {object}  RegisterUserSwaggerResponse
 // @Failure      400   {object}  helpers.ErrorResponse
 // @Failure      500   {object}  helpers.ErrorResponse
 // @Router       /v1/users/register [post]
