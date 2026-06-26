@@ -21,5 +21,5 @@ func (h *handler) CheckHealth(c echo.Context) error {
 		return helpers.Fail500(c, err)
 	}
 
-	return helpers.Success(c, http.StatusOK, "Health check passed", response)
+	return helpers.SuccessFlat(c, http.StatusOK, "Health check passed", response)
 }

@@ -7,6 +7,7 @@ import (
 
 type Handler interface {
 	Register(ctx echo.Context) error
+	Login(ctx echo.Context) error
 }
 
 type handler struct {

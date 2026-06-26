@@ -5,12 +5,16 @@ import (
 
 	"github.com/HOangAG2207/GoBeK03Echo/internal/helpers"
 	"github.com/HOangAG2207/GoBeK03Echo/internal/helpers/validator"
-	"github.com/HOangAG2207/GoBeK03Echo/internal/model"
 	"github.com/labstack/echo/v4"
 )
 
+type LoginRequest struct {
+	Username string `json:"username" validate:"required"`
+	Pasword  string `json:"password" validate:"required"`
+}
+
 func (h *handler) Login(ctx echo.Context) error {
-	req := &model.LoginRequest{}
+	req := &LoginRequest{}
 
 	// 1. Bind
 	if err := ctx.Bind(req); err != nil {
@@ -27,10 +31,10 @@ func (h *handler) Login(ctx echo.Context) error {
 	}
 
 	// 6. Response
-	return helpers.Success(
+	return helpers.SuccessWrapData(
 		ctx,
 		http.StatusOK,
-		"Login successfully!",
+		"Logged in successfully!",
 		nil, // token,
 	)
 }

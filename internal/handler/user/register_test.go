@@ -19,23 +19,23 @@ func TestHandler_RegisterUser(t *testing.T) {
 
 	testCases := []struct {
 		name         string
-		inputRequest *model.RegisterUserRequest
+		inputRequest *RegisterUserRequest
 
-		setupRequest func(e *echo.Echo, inputRequest *model.RegisterUserRequest) echo.Context
+		setupRequest func(e *echo.Echo, inputRequest *RegisterUserRequest) echo.Context
 
-		setupMockSvc func(inputRequest *model.RegisterUserRequest) *mocks.Service
+		setupMockSvc func(inputRequest *RegisterUserRequest) *mocks.Service
 
 		expectedCode int
 	}{
 		{
 			name: "success",
-			inputRequest: &model.RegisterUserRequest{
+			inputRequest: &RegisterUserRequest{
 				Displayname: "hoang",
 				Username:    "hoang01",
 				Password:    "12345678",
 				Email:       "hoang@gmail.com",
 			},
-			setupRequest: func(e *echo.Echo, input *model.RegisterUserRequest) echo.Context {
+			setupRequest: func(e *echo.Echo, input *RegisterUserRequest) echo.Context {
 				body, _ := json.Marshal(input)
 				req := httptest.NewRequest(http.MethodPost, "/v1/users/register", bytes.NewReader(body))
 				req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
@@ -43,7 +43,7 @@ func TestHandler_RegisterUser(t *testing.T) {
 				rec := httptest.NewRecorder()
 				return e.NewContext(req, rec)
 			},
-			setupMockSvc: func(input *model.RegisterUserRequest) *mocks.Service {
+			setupMockSvc: func(input *RegisterUserRequest) *mocks.Service {
 				mockSvc := new(mocks.Service)
 
 				mockSvc.
@@ -66,24 +66,24 @@ func TestHandler_RegisterUser(t *testing.T) {
 		{
 			name:         "bind error - invalid json",
 			inputRequest: nil,
-			setupRequest: func(e *echo.Echo, _ *model.RegisterUserRequest) echo.Context {
+			setupRequest: func(e *echo.Echo, _ *RegisterUserRequest) echo.Context {
 				req := httptest.NewRequest(http.MethodPost, "/v1/users/register", bytes.NewBuffer([]byte("{invalid-json")))
 				req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 
 				rec := httptest.NewRecorder()
 				return e.NewContext(req, rec)
 			},
-			setupMockSvc: func(_ *model.RegisterUserRequest) *mocks.Service {
+			setupMockSvc: func(_ *RegisterUserRequest) *mocks.Service {
 				return new(mocks.Service)
 			},
 			expectedCode: http.StatusBadRequest,
 		},
 		{
 			name: "validate error",
-			inputRequest: &model.RegisterUserRequest{
+			inputRequest: &RegisterUserRequest{
 				Username: "hoang01", // thiếu field
 			},
-			setupRequest: func(e *echo.Echo, input *model.RegisterUserRequest) echo.Context {
+			setupRequest: func(e *echo.Echo, input *RegisterUserRequest) echo.Context {
 				body, _ := json.Marshal(input)
 				req := httptest.NewRequest(http.MethodPost, "/v1/users/register", bytes.NewReader(body))
 				req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
@@ -91,20 +91,20 @@ func TestHandler_RegisterUser(t *testing.T) {
 				rec := httptest.NewRecorder()
 				return e.NewContext(req, rec)
 			},
-			setupMockSvc: func(_ *model.RegisterUserRequest) *mocks.Service {
+			setupMockSvc: func(_ *RegisterUserRequest) *mocks.Service {
 				return new(mocks.Service)
 			},
 			expectedCode: http.StatusBadRequest,
 		},
 		{
 			name: "service error",
-			inputRequest: &model.RegisterUserRequest{
+			inputRequest: &RegisterUserRequest{
 				Displayname: "hoang",
 				Username:    "hoang01",
 				Password:    "12345678",
 				Email:       "hoang@gmail.com",
 			},
-			setupRequest: func(e *echo.Echo, input *model.RegisterUserRequest) echo.Context {
+			setupRequest: func(e *echo.Echo, input *RegisterUserRequest) echo.Context {
 				body, _ := json.Marshal(input)
 				req := httptest.NewRequest(http.MethodPost, "/v1/users/register", bytes.NewReader(body))
 				req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
@@ -112,7 +112,7 @@ func TestHandler_RegisterUser(t *testing.T) {
 				rec := httptest.NewRecorder()
 				return e.NewContext(req, rec)
 			},
-			setupMockSvc: func(input *model.RegisterUserRequest) *mocks.Service {
+			setupMockSvc: func(input *RegisterUserRequest) *mocks.Service {
 				mockSvc := new(mocks.Service)
 
 				mockSvc.

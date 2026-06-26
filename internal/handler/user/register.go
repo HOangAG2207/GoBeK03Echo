@@ -10,6 +10,18 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
+type RegisterUserRequest struct {
+	Username    string `json:"username" validate:"required,gt=0"`
+	Displayname string `json:"display_name" validate:"required,gt=0"`
+	Email       string `json:"email" validate:"required,email"`
+	Password    string `json:"password" validate:"required,gte=8"`
+}
+type RegisterUserSwaggerResponse struct {
+	Status  string     `json:"status"`
+	Message string     `json:"message"`
+	Data    model.User `json:"data"`
+}
+
 // New User generate.
 // @Summary      Create a new user
 // @Description  Create a new user with the provided information
@@ -22,7 +34,7 @@ import (
 // @Failure      500   {object}  helpers.ErrorResponse
 // @Router       /v1/users/register [post]
 func (h *handler) Register(ctx echo.Context) error {
-	req := &model.RegisterUserRequest{}
+	req := &RegisterUserRequest{}
 
 	// 1. Bind
 	if err := ctx.Bind(req); err != nil {
@@ -44,7 +56,7 @@ func (h *handler) Register(ctx echo.Context) error {
 		return helpers.Fail500(ctx, nil)
 	}
 	// 6. Response
-	return helpers.Success(
+	return helpers.SuccessWrapData(
 		ctx,
 		http.StatusOK,
 		"Register user successfully!",

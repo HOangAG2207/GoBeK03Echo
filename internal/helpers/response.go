@@ -20,7 +20,7 @@ type ErrorResponse struct {
 }
 
 // SUCCESS KHÔNG CÓ DATA WRAPPER
-func Success(c echo.Context, status int, info string, data any) error {
+func SuccessFlat(c echo.Context, status int, info string, data any) error {
 	resp := map[string]any{
 		"status": "success",
 		"info":   info,
@@ -29,6 +29,15 @@ func Success(c echo.Context, status int, info string, data any) error {
 	// merge struct vào root
 	if m, ok := structToMap(data); ok {
 		maps.Copy(resp, m)
+	}
+
+	return c.JSON(status, resp)
+}
+func SuccessWrapData(c echo.Context, status int, info string, data any) error {
+	resp := map[string]any{
+		"status": "success",
+		"info":   info,
+		"data":   data,
 	}
 
 	return c.JSON(status, resp)
