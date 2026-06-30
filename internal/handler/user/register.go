@@ -56,10 +56,11 @@ func (h *handler) Register(ctx echo.Context) error {
 		return helpers.Fail500(ctx, nil)
 	}
 	// 6. Response
-	return helpers.SuccessWrapData(
+	return helpers.SuccessWithMode(
 		ctx,
 		http.StatusOK,
-		"Register user successfully!",
+		"Register an user successfully!",
 		user,
+		helpers.ModeWrap,
 	)
 }

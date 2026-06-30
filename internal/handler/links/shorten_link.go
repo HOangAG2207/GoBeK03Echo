@@ -51,12 +51,13 @@ func (h *handler) ShortenLink(ctx echo.Context) error {
 	}
 
 	// 6. Response
-	return helpers.SuccessFlat(
+	return helpers.SuccessWithMode(
 		ctx,
 		http.StatusOK,
 		"Shorten URL generated successfully!",
 		model.ShortenURLResponse{
 			Code: code,
 		},
+		helpers.ModeFlat,
 	)
 }

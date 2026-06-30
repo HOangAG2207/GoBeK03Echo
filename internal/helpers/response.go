@@ -19,25 +19,48 @@ type ErrorResponse struct {
 	Error  any    `json:"error,omitempty"`
 }
 
-// SUCCESS KHÔNG CÓ DATA WRAPPER
-func SuccessFlat(c echo.Context, status int, info string, data any) error {
+// // SUCCESS KHÔNG CÓ DATA WRAPPER
+// func SuccessFlat(c echo.Context, status int, info string, data any) error {
+// 	resp := map[string]any{
+// 		"status": "success",
+// 		"info":   info,
+// 	}
+
+// 	// merge struct vào root
+// 	if m, ok := structToMap(data); ok {
+// 		maps.Copy(resp, m)
+// 	}
+
+// 	return c.JSON(status, resp)
+// }
+// func SuccessWrapData(c echo.Context, status int, info string, data any) error {
+// 	resp := map[string]any{
+// 		"status": "success",
+// 		"info":   info,
+// 		"data":   data,
+// 	}
+
+//		return c.JSON(status, resp)
+//	}
+type ResponseMode int
+
+const (
+	ModeFlat ResponseMode = iota
+	ModeWrap
+)
+
+func SuccessWithMode(c echo.Context, status int, info string, data any, mode ResponseMode) error {
 	resp := map[string]any{
 		"status": "success",
 		"info":   info,
 	}
 
-	// merge struct vào root
-	if m, ok := structToMap(data); ok {
-		maps.Copy(resp, m)
-	}
-
-	return c.JSON(status, resp)
-}
-func SuccessWrapData(c echo.Context, status int, info string, data any) error {
-	resp := map[string]any{
-		"status": "success",
-		"info":   info,
-		"data":   data,
+	if mode == ModeFlat {
+		if m, ok := structToMap(data); ok {
+			maps.Copy(resp, m)
+		}
+	} else {
+		resp["data"] = data
 	}
 
 	return c.JSON(status, resp)

@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 
+	pkgjwt "github.com/HOangAG2207/GoBeK03Echo/pkg/jwt"
 	pkgutils "github.com/HOangAG2207/GoBeK03Echo/pkg/utils"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -24,6 +25,7 @@ type engine struct {
 	db            *gorm.DB
 	randomCodeGen pkgutils.CodeGenerator
 	passHashing   pkgutils.PasswordHashing
+	jwtGen        pkgjwt.JwtGenerator
 }
 
 type EngineOpts struct {
@@ -32,6 +34,7 @@ type EngineOpts struct {
 	DB            *gorm.DB
 	RandomCodeGen pkgutils.CodeGenerator
 	PassHashing   pkgutils.PasswordHashing
+	JwtGen        pkgjwt.JwtGenerator
 }
 
 func NewEngine(opts *EngineOpts) Engine {
@@ -42,6 +45,7 @@ func NewEngine(opts *EngineOpts) Engine {
 		db:            opts.DB,
 		randomCodeGen: opts.RandomCodeGen,
 		passHashing:   opts.PassHashing,
+		jwtGen:        opts.JwtGen,
 	}
 
 	e.initMiddleware()

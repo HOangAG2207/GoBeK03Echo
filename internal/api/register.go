@@ -36,7 +36,7 @@ func (e *engine) registerHandlers() *Handlers {
 
 	// ===== User =====
 	userRepo := userRepo.NewRepository(e.db)
-	userService := userService.NewService(userRepo, e.passHashing)
+	userService := userService.NewService(userRepo, e.passHashing, e.jwtGen)
 	userHandler := userHandler.NewHandler(userService)
 
 	return &Handlers{

@@ -27,4 +27,5 @@ func (e *engine) initRoutes() {
 	// User
 	// - Register User
 	api.POST("/users/register", h.User.Register)
+	api.POST("/users/login", h.User.Login)
 }
