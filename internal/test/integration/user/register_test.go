@@ -52,7 +52,7 @@ func TestIntegration_RegisterUser(t *testing.T) {
 			},
 
 			expectedStatusCode:      http.StatusOK,
-			expectedMessageResponse: "Register user successfully!",
+			expectedMessageResponse: "Register an user successfully!",
 		},
 
 		{

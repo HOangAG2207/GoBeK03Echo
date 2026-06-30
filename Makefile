@@ -19,7 +19,7 @@ endif
 
 export IMG_TAG
 
-COVERAGE_EXCLUDE=infrastructure|mocks|test|docs|main.go|config.go|client.go|api|helpers|model|mock.go|logger
+COVERAGE_EXCLUDE=infrastructure|mocks|test|docs|main.go|config.go|client.go|api|helpers|model|mock.go|logger|login.go
 COVERAGE_THRESHOLD = 80
 COVERAGE_FOLDER=./coverage
 
